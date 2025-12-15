@@ -25,8 +25,8 @@ jobs:
           java-version: 17
 
       # 3️⃣ إعطاء صلاحية التنفيذ لـ Gradle
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+      - name: Build extension
+       run: gradle assembleDebug
 
       # 4️⃣ بناء الإضافة
       - name: Build extension
