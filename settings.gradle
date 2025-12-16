@@ -1,9 +1,16 @@
 pluginManagement {
     repositories {
-        gradlePluginPortal()
         google()
         mavenCentral()
         maven { url "https://jitpack.io" }
+        maven {
+            url = uri("https://maven.pkg.github.com/tachiyomiorg/tachiyomi")
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_USERNAME")
+                password = project.findProperty("gpr.token") ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
+        gradlePluginPortal()
     }
 }
 
@@ -13,7 +20,15 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven { url "https://jitpack.io" }
+        maven {
+            url = uri("https://maven.pkg.github.com/tachiyomiorg/tachiyomi")
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("AhmedHero55")
+                password = project.findProperty("gpr.token") ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
     }
 }
 
 include(":extension")
+
