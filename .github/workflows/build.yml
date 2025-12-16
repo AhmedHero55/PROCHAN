@@ -1,32 +1,38 @@
-name: Build Tachiyomi Extension
+name: Build PROCHAN APK
 
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
-    branches:
-      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
+    # 1. جلب المشروع من GitHub
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          distribution: temurin
-          java-version: 17
+    # 2. ضبط صلاحيات gradlew
+    - name: Make gradlew executable
+      run: chmod +x gradlew
 
-      - name: Build Debug AAR
-        run: ./gradlew assembleDebug
+    # 3. إعداد JDK
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: 17
+        distribution: temurin
 
-      - name: Upload AAR
-        uses: actions/upload-artifact@v4
-        with:
-          name: prochan-extension
-          path: build/outputs/aar/
+    # 4. بناء APK بنسخة Debug
+    - name: Build Debug APK
+      run: ./gradlew assembleDebug
+
+    # 5. حفظ ملفات الـ APK كمرفقات في GitHub Actions
+    - name: Upload APK
+      uses: actions/upload-artifact@v3
+      with:
+        name: PROCHAN-debug-apk
+        path: app/build/outputs/apk/debug/*.apk
