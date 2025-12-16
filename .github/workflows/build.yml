@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_USERNAME: ${{ secrets.hero }}
-      GITHUB_TOKEN: ${{ secrets.1234 }}
+      GITHUB_TOKEN: ${{ secrets.token1 }}
 
     steps:
       - name: Checkout repository
