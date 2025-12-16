@@ -6,8 +6,8 @@ pluginManagement {
         maven {
             url = uri("https://maven.pkg.github.com/tachiyomiorg/tachiyomi")
             credentials {
-                username = System.getenv("HAREM") ?: ""
-                password = System.getenv("TOKEN2") ?: ""
+                username = System.getenv("GITHUB_USERNAME") ?: ""
+                password = System.getenv("GITHUB_TOKEN") ?: ""
             }
         }
         gradlePluginPortal()
@@ -23,8 +23,8 @@ dependencyResolutionManagement {
         maven {
             url = uri("https://maven.pkg.github.com/tachiyomiorg/tachiyomi")
             credentials {
-                username = System.getenv("HAREM") ?: ""
-                password = System.getenv("TOKEN2") ?: ""
+                username = System.getenv("GITHUB_USERNAME") ?: ""
+                password = System.getenv("GITHUB_TOKEN") ?: ""
             }
         }
     }
