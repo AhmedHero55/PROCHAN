@@ -1,14 +1,7 @@
-name: Build PROCHAN Extension AAR
-
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -18,6 +11,9 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew  # تعيين صلاحيات التنفيذ لـ gradlew
 
       - name: Build PROCHAN Extension AAR
         env:
