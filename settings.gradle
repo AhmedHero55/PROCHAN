@@ -1,2 +1,10 @@
 rootProject.name = "PROCHAN"
 include(":extension")
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
