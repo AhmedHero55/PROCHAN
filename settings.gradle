@@ -1,8 +1,9 @@
 pluginManagement {
     repositories {
+        gradlePluginPortal()
         google()
         mavenCentral()
-        gradlePluginPortal()
+        maven { url "https://jitpack.io" }
     }
 }
 
@@ -11,11 +12,6 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-
-        // 🔴 هذا هو المفتاح
-        maven { url = uri("https://jitpack.io") }
+        maven { url "https://jitpack.io" }
     }
 }
-
-rootProject.name = "PROCHAN"
-include(":extension")
