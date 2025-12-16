@@ -1,4 +1,4 @@
-name: Android CI
+name: Build PROCHAN APK
 
 on:
   push:
@@ -8,75 +8,37 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # يمكنك تغييره إلى windows-latest إذا أردت
     env:
       ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
 
     steps:
-      - name: Checkout
+      # 1. Checkout المشروع
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up JDK 11
+      # 2. إعداد JDK 17
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: 11
+          distribution: temurin
+          java-version: 17
 
-      - name: Cache Gradle
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-cache-${{ runner.os }}-${{ hashFiles('**/gradle-wrapper.properties') }}
+      # 3. إعطاء صلاحية التنفيذ لملف gradlew
+      - name: Grant execute permission for Gradle wrapper
+        run: chmod +x ./gradlew
 
-      - name: Install Android command-line tools and SDK components
-        shell: bash
-        run: |
-          set -euo pipefail
-        name: Ensure Gradle version 8.1.1
+      # 4. تثبيت نسخة Gradle المتوافقة مع المشروع
+      - name: Ensure Gradle version 8.1.1
         run: ./gradlew wrapper --gradle-version 8.1.1
-          mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools"
-          cd "$ANDROID_SDK_ROOT"
 
-          curl -fsSL "https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip" -o cmdline-tools.zip
-          unzip -q cmdline-tools.zip -d cmdline-tools
+      # 5. بناء Debug APK
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug
 
-          # place tools in expected path
-          mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools/latest"
-          mv cmdline-tools/cmdline-tools/* "$ANDROID_SDK_ROOT/cmdline-tools/latest/" || true
-
-          export PATH="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH"
-
-          # Install required SDK components (this may take a few minutes)
-          # Do not use pipefail for the license acceptance part (handled below)
-          "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROID_SDK_ROOT" "platform-tools" "platforms;android-33" "build-tools;33.0.2"
-
-          # Accept licenses safely:
-          # disable pipefail so that the 'yes' process exit code (SIGPIPE) does not fail the step
-          set +o pipefail
-          yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --licenses --sdk_root="$ANDROID_SDK_ROOT" || true
-          # restore strict pipefail for remaining commands
-          set -o pipefail
-
-      - name: Show Java and Gradle versions
-        shell: bash
-        run: |
-          java -version
-          ./gradlew -v
-
-      - name: Build (assemble)
-        shell: bash
-        run: ./gradlew :extension:assembleRelease --no-daemon --stacktrace
-        env:
-          ANDROID_HOME: ${{ env.ANDROID_SDK_ROOT }}
-          ANDROID_SDK_ROOT: ${{ env.ANDROID_SDK_ROOT }}
-
-      - name: Upload artifact (AAR)
-        if: always()
+      # 6. رفع ملف APK كمرفق في GitHub Actions
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: build-artifacts
-          path: |
-            extension/build/outputs/**/*.aar
-            extension/build/outputs/**/*.apk
+          name: ProChan-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
