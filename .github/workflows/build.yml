@@ -9,7 +9,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    # نُعيِّن مجلداً داخل workspace لتخزين Android SDK (بديل لـ runner.temp)
     env:
       ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
 
@@ -32,28 +31,41 @@ jobs:
           key: gradle-cache-${{ runner.os }}-${{ hashFiles('**/gradle-wrapper.properties') }}
 
       - name: Install Android command-line tools and SDK components
+        shell: bash
         run: |
+          set -euo pipefail
+
           mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools"
           cd "$ANDROID_SDK_ROOT"
+
           curl -fsSL "https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip" -o cmdline-tools.zip
           unzip -q cmdline-tools.zip -d cmdline-tools
+
+          # place tools in expected path
           mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools/latest"
           mv cmdline-tools/cmdline-tools/* "$ANDROID_SDK_ROOT/cmdline-tools/latest/" || true
-          export PATH="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH"
-          yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROID_SDK_ROOT" "platform-tools" "platforms;android-33" "build-tools;33.0.2"
-        shell: bash
 
-      - name: Accept licenses
-        run: yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --licenses --sdk_root="$ANDROID_SDK_ROOT" || true
-        shell: bash
+          export PATH="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH"
+
+          # Install required SDK components (this may take a few minutes)
+          # Do not use pipefail for the license acceptance part (handled below)
+          "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROID_SDK_ROOT" "platform-tools" "platforms;android-33" "build-tools;33.0.2"
+
+          # Accept licenses safely:
+          # disable pipefail so that the 'yes' process exit code (SIGPIPE) does not fail the step
+          set +o pipefail
+          yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --licenses --sdk_root="$ANDROID_SDK_ROOT" || true
+          # restore strict pipefail for remaining commands
+          set -o pipefail
 
       - name: Show Java and Gradle versions
+        shell: bash
         run: |
           java -version
           ./gradlew -v
-        shell: bash
 
       - name: Build (assemble)
+        shell: bash
         run: ./gradlew :extension:assembleRelease --no-daemon --stacktrace
         env:
           ANDROID_HOME: ${{ env.ANDROID_SDK_ROOT }}
