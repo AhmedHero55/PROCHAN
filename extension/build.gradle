@@ -37,7 +37,7 @@ repositories {
         url = uri("https://maven.pkg.github.com/tachiyomiorg/tachiyomi")
         credentials {
             username = System.getenv("AhmedHero55") ?: ""
-            password = System.getenv("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") ?: ""
+            password = System.getenv("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") ?: ""
         }
     }
 }
@@ -46,4 +46,5 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.0"
     implementation "eu.kanade.tachiyomi:source-api:0.15.3"
 }
+
 
