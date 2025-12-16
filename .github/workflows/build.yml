@@ -10,8 +10,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      GITHUB_USERNAME: ${{ AhmedHero55 }}
-      GITHUB_TOKEN: ${{ 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 }}
+      GITHUB_USERNAME: ${{ secrets.GITHUB_USERNAME }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - name: Checkout repository
