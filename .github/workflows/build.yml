@@ -10,8 +10,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      GITHUB_USERNAME: ${{ secrets.hero }}
-      GITHUB_TOKEN: ${{ secrets.token1 }}
+      GITHUB_USERNAME: ${{ secrets.harem }}
+      GITHUB_TOKEN: ${{ secrets.token2 }}
 
     steps:
       - name: Checkout repository
