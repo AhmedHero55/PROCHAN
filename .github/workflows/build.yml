@@ -27,8 +27,8 @@ jobs:
 
       - name: Build PROCHAN Extension AAR
         env:
-          GITHUB_USERNAME: ${{ secrets.GITHUB_USERNAME }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_USERNAME: ${{ secrets.harem }}
+          GITHUB_TOKEN: ${{ secrets.token2 }}
         run: ./gradlew :extension:assembleRelease
 
       - name: Upload AAR
