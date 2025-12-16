@@ -31,12 +31,7 @@ android {
 }
 
 dependencies {
-    // Tachiyomi Source API
-    compileOnly("org.tachiyomi:source-api:0.15.3")
-
-    // Kotlin
-    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:1.9.10")
-
-    // AndroidX (مطلوب)
-    compileOnly("androidx.core:core-ktx:1.10.1")
+    compileOnly("eu.kanade.tachiyomi:source-api:0.15.3")
 }
+
+
