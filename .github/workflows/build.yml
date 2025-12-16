@@ -11,28 +11,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. جلب المشروع من GitHub
+    # 1. جلب المشروع
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    # 2. ضبط صلاحيات gradlew
+    # 2. إعطاء صلاحية التنفيذ لملف gradlew
     - name: Make gradlew executable
-      run: chmod +x gradlew
+      run: chmod +x ./gradlew
 
-    # 3. إعداد JDK
+    # 3. إعداد JDK 17
     - name: Set up JDK 17
       uses: actions/setup-java@v3
       with:
         java-version: 17
-        distribution: temurin
-
-    # 4. بناء APK بنسخة Debug
-    - name: Build Debug APK
-      run: ./gradlew assembleDebug
-
-    # 5. حفظ ملفات الـ APK كمرفقات في GitHub Actions
-    - name: Upload APK
-      uses: actions/upload-artifact@v3
-      with:
-        name: PROCHAN-debug-apk
-        path: app/build/outputs/apk/debug/*.apk
+        distribution:
