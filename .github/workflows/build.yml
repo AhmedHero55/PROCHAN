@@ -1,4 +1,4 @@
-name: Build APK
+name: Build PROCHAN APK
 
 on:
   push:
@@ -22,7 +22,10 @@ jobs:
           cache: gradle
 
       - name: Grant execute permission for Gradle wrapper
-        run: chmod +x gradlew
+        run: chmod +x ./gradlew
+
+      - name: Ensure compatible Gradle version
+        run: ./gradlew wrapper --gradle-version 8.1.1
 
       - name: Build Debug APK
         run: ./gradlew assembleDebug
@@ -31,5 +34,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ProChan-debug-apk
-          path: |
-            **/build/outputs/apk/debug/*.apk
+          path: app/build/outputs/apk/debug/*.apk
