@@ -6,8 +6,8 @@ pluginManagement {
         maven {
             url = uri("https://maven.pkg.github.com/tachiyomiorg/tachiyomi")
             credentials {
-                username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_USERNAME")
-                password = project.findProperty("gpr.token") ?: System.getenv("GITHUB_TOKEN")
+                username = project.findProperty("gpr.user") ?: System.getenv("AhmedHero55")
+                password = project.findProperty("gpr.token") ?: System.getenv("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")
             }
         }
         gradlePluginPortal()
@@ -31,4 +31,5 @@ dependencyResolutionManagement {
 }
 
 include(":extension")
+
 
