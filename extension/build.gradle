@@ -5,33 +5,17 @@ plugins {
 
 android {
     namespace "eu.kanade.tachiyomi.extension.prochan"
-    compileSdk 33
+    compileSdkVersion 33
 
     defaultConfig {
-        minSdk 21
-        targetSdk 33
-        versionCode 1
-        versionName "1.0"
+        minSdkVersion 21
+        targetSdkVersion 33
     }
 
     buildTypes {
         release {
             minifyEnabled false
-            shrinkResources false
         }
-        debug {
-            minifyEnabled false
-            shrinkResources false
-        }
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = "17"
     }
 }
 
