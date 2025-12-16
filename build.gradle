@@ -6,7 +6,7 @@ plugins {
 // أي كود آخر يجب أن يكون بعد plugins {}
 
 
-apply from: "../common.gradle"
+// apply from: 'common.gradle'
 
 android {
     compileSdk 34
@@ -20,5 +20,6 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "com.github.tachiyomiorg:source-api:1.1.1"
 }
+
 
 
