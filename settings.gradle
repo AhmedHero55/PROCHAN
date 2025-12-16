@@ -6,8 +6,8 @@ pluginManagement {
         maven {
             url = uri("https://maven.pkg.github.com/tachiyomiorg/tachiyomi")
             credentials {
-                username = System.getenv("AhmedHero55") ?: ""
-                password = System.getenv("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") ?: ""
+                username = System.getenv("GITHUB_USERNAME") ?: ""
+                password = System.getenv("GITHUB_TOKEN") ?: ""
             }
         }
         gradlePluginPortal()
@@ -31,6 +31,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "PROCHAN"
-
 include(":extension")
-
