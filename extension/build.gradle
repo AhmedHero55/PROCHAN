@@ -12,7 +12,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false  // ⚠ استخدام الصياغة الصحيحة بالحرف الصغير
+            isMinifyEnabled = false  // تأكد من الكتابة الصحيحة
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -31,5 +31,5 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.0"
 
     // Tachiyomi source API
-    implementation "eu.kanade.tachiyomi:source-api:0.15.3"
+    implementation "eu.kanade.tachiyomi:source-api:0.15.3"  // تأكد من التوافق مع النسخة المحددة
 }
