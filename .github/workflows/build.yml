@@ -9,6 +9,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      GITHUB_USERNAME: ${{AhmedHero55}}
+      GITHUB_TOKEN: ${{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}}
 
     steps:
       - name: Checkout repository
@@ -23,7 +26,7 @@ jobs:
       - name: Grant execute permission for Gradle wrapper
         run: chmod +x ./gradlew
 
-      - name: Build AAR
+      - name: Build PROCHAN Extension AAR
         run: ./gradlew :extension:assembleRelease
 
       - name: Upload AAR
