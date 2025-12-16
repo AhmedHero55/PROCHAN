@@ -4,30 +4,19 @@ plugins {
 }
 
 android {
-    namespace 'com.ahmedhero55.prochan.extension'
+    namespace 'com.example.prochan' // عدلها حسب اسم حزمة الإضافة
     compileSdk 33
 
     defaultConfig {
         minSdk 21
         targetSdk 33
-        versionCode 1
-        versionName "1.0"
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            // signingConfig null إذا لا تستخدم توقيع خاص
         }
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = "17"
     }
 }
 
