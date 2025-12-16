@@ -29,3 +29,6 @@ dependencyResolutionManagement {
         }
     }
 }
+
+rootProject.name = "PROCHAN"
+include(":extension")
