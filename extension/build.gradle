@@ -1,31 +1,44 @@
-plugins {
-    id 'com.android.library'
-    id 'org.jetbrains.kotlin.android'
-}
+// Module (extension) build.gradle
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 
 android {
-    namespace 'com.ahmedhero.prochan'
-    compileSdk 34
+    compileSdkVersion 33
+
+    namespace "eu.kanade.tachiyomi.extension.prochan"
 
     defaultConfig {
-        minSdk 24
-        targetSdk 34
+        minSdkVersion 21
+        targetSdkVersion 33
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
+        // For library modules no applicationId — Tachiyomi extensions usually packaged as libraries.
     }
 
     buildTypes {
         release {
-            isMinifyEnabled false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-        debug {
-            isDebuggable true
-        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = "11"
     }
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.0"
-    // أضف أي تبعيات أخرى هنا حسب مشروع PROCHAN
+    // Use kotlin version declared in root buildscript ext
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:${rootProject.ext.kotlin_version}"
+
+    // TODO: استبدل هذا بالاعتماديات الحقيقية لـ Tachiyomi extension API
+    // مثال (غير حقيقي) — استبدل بالتنسيق الصحيح بحسب مستندات Tachiyomi:
+    // implementation "eu.kanade.tachiyomi:extension-lib:1.0.0"
+
+    // مثال اعتمادية مفيدة أثناء التطوير
+    implementation 'androidx.core:core-ktx:1.10.1'
 }
