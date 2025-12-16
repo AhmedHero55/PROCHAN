@@ -1,15 +1,24 @@
 buildscript {
+    ext {
+        kotlin_version = '1.9.10'
+    }
+
     repositories {
         google()
         mavenCentral()
-    }
-
-    ext {
-        kotlin_version = "1.9.10"
+        maven { url 'https://jitpack.io' } // يتيح تنزيل source-api مباشرة
     }
 
     dependencies {
         classpath "com.android.tools.build:gradle:8.1.1"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
     }
 }
