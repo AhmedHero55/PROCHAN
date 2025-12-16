@@ -3,6 +3,9 @@ plugins {
     id 'org.jetbrains.kotlin.android' version '1.9.0' apply false
 }
 
+// أي كود آخر يجب أن يكون بعد plugins {}
+
+
 apply from: "../common.gradle"
 
 android {
@@ -17,4 +20,5 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "com.github.tachiyomiorg:source-api:1.1.1"
 }
+
 
