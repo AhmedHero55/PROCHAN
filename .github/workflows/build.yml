@@ -1,3 +1,13 @@
+name: Build PROCHAN Extension
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -13,7 +23,7 @@ jobs:
           java-version: 17
 
       - name: Make gradlew executable
-        run: chmod +x ./gradlew  # تعيين صلاحيات التنفيذ لـ gradlew
+        run: chmod +x ./gradlew
 
       - name: Build PROCHAN Extension AAR
         env:
