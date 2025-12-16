@@ -14,7 +14,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            MinifyEnabled = false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -37,3 +37,4 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.0"
     implementation "eu.kanade.tachiyomi:source-api:0.15.3"
 }
+
