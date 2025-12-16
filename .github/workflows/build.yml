@@ -1,36 +1,31 @@
-name: Build PROCHAN Extension
+name: Build PROCHAN Extension AAR
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   pull_request:
-    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      GITHUB_USERNAME: ${{ secrets.HAREM }}
-      GITHUB_TOKEN: ${{ secrets.TOKEN2 }}
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v3
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v3
         with:
           distribution: temurin
           java-version: 17
 
-      - name: Grant execute permission for Gradle wrapper
-        run: chmod +x ./gradlew
-
       - name: Build PROCHAN Extension AAR
         run: ./gradlew :extension:assembleRelease
+        env:
+          GITHUB_USERNAME: ${{ secrets.harem }}
+          GITHUB_TOKEN: ${{ secrets.token2 }}
 
       - name: Upload AAR
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
-          name: prochan-release-aar
+          name: prochan-extension-release
           path: extension/build/outputs/aar/extension-release.aar
