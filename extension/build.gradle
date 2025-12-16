@@ -4,19 +4,21 @@ plugins {
 }
 
 android {
-    namespace "eu.kanade.tachiyomi.extension.ar.prochan"
-
     compileSdk 33
 
     defaultConfig {
         minSdk 21
         targetSdk 33
-        consumerProguardFiles "consumer-rules.pro"
+        versionCode 1
+        versionName "1.0"
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            isMinifyEnabled false
+        }
+        debug {
+            isMinifyEnabled false
         }
     }
 
@@ -31,7 +33,6 @@ android {
 }
 
 dependencies {
-    compileOnly("eu.kanade.tachiyomi:source-api:0.15.3")
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "eu.kanade.tachiyomi:source-api:+" // "+" للحصول على آخر نسخة متوفرة
 }
-
-
