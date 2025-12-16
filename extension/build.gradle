@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace "eu.kanade.tachiyomi.extension.prochan"
+    namespace 'eu.kanade.tachiyomi.extension.prochan'
     compileSdk 33
 
     defaultConfig {
@@ -14,18 +14,9 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled = false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            isMinifyEnabled = false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = "17"
     }
 }
 
@@ -36,15 +27,13 @@ repositories {
     maven {
         url = uri("https://maven.pkg.github.com/tachiyomiorg/tachiyomi")
         credentials {
-            username = System.getenv("AhmedHero55") ?: ""
-            password = System.getenv("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") ?: ""
+            username = System.getenv("GITHUB_USERNAME") ?: ""
+            password = System.getenv("GITHUB_TOKEN") ?: ""
         }
     }
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.0"
     implementation "eu.kanade.tachiyomi:source-api:0.15.3"
 }
-
-
