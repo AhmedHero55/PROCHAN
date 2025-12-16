@@ -4,6 +4,7 @@ plugins {
 }
 
 android {
+    namespace "eu.kanade.tachiyomi.extension.prochan" // غيّر هذا حسب اسم الباقة الفعلي
     compileSdk 33
 
     defaultConfig {
@@ -15,10 +16,13 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false   // ✅ صحيح حسب AGP 8.x
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
             minifyEnabled false
+            shrinkResources false
         }
     }
 
@@ -32,7 +36,14 @@ android {
     }
 }
 
+repositories {
+    google()
+    mavenCentral()
+    maven { url "https://jitpack.io" } // مهم لإحضار source-api من JitPack
+}
+
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.10"
-    implementation "eu.kanade.tachiyomi:source-api:+" // لجلب آخر نسخة تلقائيًا
+    compileOnly "eu.kanade.tachiyomi:source-api:0.15.3" // نسخة Source API الأخيرة المستقرة
+    implementation "androidx.core:core-ktx:1.10.1"
 }
