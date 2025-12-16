@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # يمكنك تغييره إلى windows-latest إذا أردت
+    runs-on: ubuntu-latest
     env:
       ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
 
@@ -23,14 +23,6 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-        - name: Grant execute permission for Gradle wrapper
-          run: chmod +x ./gradlew
-
-        - name: Ensure Gradle version 8.1.1
-          run: ./gradlew wrapper --gradle-version 8.1.1 --distribution-type all
-
-        - name: Build Debug APK
-          run: ./gradlew assembleDebug
 
       # 3. إعطاء صلاحية التنفيذ لملف gradlew
       - name: Grant execute permission for Gradle wrapper
@@ -38,7 +30,7 @@ jobs:
 
       # 4. تثبيت نسخة Gradle المتوافقة مع المشروع
       - name: Ensure Gradle version 8.1.1
-        run: ./gradlew wrapper --gradle-version 8.1.1
+        run: ./gradlew wrapper --gradle-version 8.1.1 --distribution-type all
 
       # 5. بناء Debug APK
       - name: Build Debug APK
