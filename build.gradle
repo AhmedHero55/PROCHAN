@@ -1,20 +1,18 @@
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-        maven { url "https://jitpack.io" }
-        maven {
-            url = uri("https://maven.pkg.github.com/tachiyomiorg/tachiyomi")
-            credentials {
-                username = System.getenv("GITHUB_USERNAME") ?: ""
-                password = System.getenv("GITHUB_TOKEN") ?: ""
-            }
-        }
-    }
-    dependencies {
-        classpath "com.android.tools.build:gradle:8.1.1"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0"
-    }
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.9.22'
 }
 
-// لا تضف allprojects.repositories هنا
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly "eu.kanade.tachiyomi:source-api:1.5"
+    compileOnly "org.jsoup:jsoup:1.17.2"
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
