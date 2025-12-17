@@ -25,6 +25,6 @@ android {
 }
 
 dependencies {
-    compileOnly "eu.kanade.tachiyomi:source-api:1.5"
+    compileOnly "com.github.tachiyomiorg:source-api:1.5"
     compileOnly "org.jsoup:jsoup:1.17.2"
 }
