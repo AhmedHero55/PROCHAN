@@ -1,18 +1,32 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.9.22'
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace "ar.prochan"
+    compileSdk 34
+
+    defaultConfig {
+        minSdk 21
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
 }
 
 repositories {
+    google()
     mavenCentral()
 }
 
 dependencies {
     compileOnly "eu.kanade.tachiyomi:source-api:1.5"
     compileOnly "org.jsoup:jsoup:1.17.2"
-}
-
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
-    }
 }
