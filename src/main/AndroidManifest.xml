@@ -1,4 +1,3 @@
-
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ar.prochan">
@@ -8,7 +7,7 @@
         android:icon="@mipmap/ic_launcher"
         android:allowBackup="false"
         android:supportsRtl="true">
-        
+
         <!-- تعريف الإضافة كمصدر Tachiyomi -->
         <meta-data
             android:name="tachiyomi.extension.class"
