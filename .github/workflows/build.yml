@@ -9,31 +9,40 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
+      # 1️⃣ جلب الكود
       - name: Checkout
         uses: actions/checkout@v4
 
+      # 2️⃣ إعطاء صلاحيات تنفيذ للـ gradlew
+      - name: Grant execute permission for Gradle Wrapper
+        run: chmod +x gradlew
+
+      # 3️⃣ إعداد JDK 17
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
+      # 4️⃣ تفعيل كاش Gradle
       - name: Gradle cache
         uses: gradle/actions/setup-gradle@v3
 
+      # 5️⃣ بناء مكتبة source-api من Mihon ونسخها إلى app/libs
       - name: Build Mihon source-api AAR and copy
         run: ./gradlew copySourceApiAar
 
-      - name: Grant execute permission
-        run: chmod +x ./gradlew
-
+      # 6️⃣ بناء APK الإصدار
       - name: Assemble Release
         run: ./gradlew :app:clean :app:assembleRelease --no-daemon
 
+      # 7️⃣ بناء APK التجريبي
       - name: Assemble Debug
         run: ./gradlew :app:assembleDebug --no-daemon
 
+      # 8️⃣ رفع الـ APKs كـ artifacts
       - name: Upload Release APK
         uses: actions/upload-artifact@v4
         with:
@@ -46,6 +55,7 @@ jobs:
           name: prochan-debug-apk
           path: app/build/outputs/apk/debug/*.apk
 
+      # 9️⃣ رفع مكتبة source-api كـ artifact أيضًا
       - name: Upload source-api AAR
         uses: actions/upload-artifact@v4
         with:
