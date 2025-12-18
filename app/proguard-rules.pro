@@ -1,6 +1,7 @@
-# Keep Tachiyomi source models
--keep class eu.kanade.tachiyomi.source.model.** { *; }
+# احتفاظ بكلاسات Tachiyomi
+-keep class eu.kanade.tachiyomi.** { *; }
+-keep class okhttp3.** { *; }
+-keep class org.jsoup.** { *; }
 
-# تحسين التوافق مع Kotlin
--keep class kotlin.** { *; }
--dontwarn kotlin.**
+# تجنّب حذف أعضاء SManga/SChapter المستخدمة عبر reflection المحتمل
+-keepclassmembers class eu.kanade.tachiyomi.source.model.** { *; }
