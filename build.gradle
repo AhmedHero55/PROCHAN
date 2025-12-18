@@ -1,9 +1,9 @@
 plugins {
-    id 'com.android.library' version '8.1.1' apply false
+    id 'com.android.application' version '8.1.1' apply false
     id 'org.jetbrains.kotlin.android' version '1.9.22' apply false
 }
 
-apply plugin: 'com.android.library'
+apply plugin: 'com.android.application'
 apply plugin: 'org.jetbrains.kotlin.android'
 
 android {
@@ -11,7 +11,11 @@ android {
     compileSdk 34
 
     defaultConfig {
+        applicationId "ar.prochan"
         minSdk 21
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
     }
 
     compileOptions {
@@ -25,8 +29,6 @@ android {
 }
 
 dependencies {
-    // مكتبة Tachiyomi API (يجب أن تكون صحيحة وليست تالفة)
-    compileOnly files("libs/source-api.aar")
-    // مكتبة Jsoup لتحليل HTML
-    compileOnly "org.jsoup:jsoup:1.17.2"
+    implementation files("libs/source-api.aar")
+    implementation "org.jsoup:jsoup:1.17.2"
 }
