@@ -3,6 +3,7 @@ package ar.prochan
 import eu.kanade.tachiyomi.source.model.*
 import eu.kanade.tachiyomi.source.online.ParsedHttpSource
 import okhttp3.Request
+import okhttp3.Response
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 
@@ -36,20 +37,17 @@ class ProChan : ParsedHttpSource() {
     }
 
     override fun latestUpdatesSelector() = popularMangaSelector()
-
-    override fun latestUpdatesFromElement(element: Element): SManga =
+    override fun latestUpdatesFromElement(element: Element) =
         popularMangaFromElement(element)
-
     override fun latestUpdatesNextPageSelector() = popularMangaNextPageSelector()
 
     /* ===== Search ===== */
     override fun searchMangaRequest(page: Int, query: String, filters: FilterList): Request {
-        // بحث ووردبريس نموذجي
         return GET("$baseUrl/?s=$query", headers)
     }
 
     override fun searchMangaSelector() = popularMangaSelector()
-    override fun searchMangaFromElement(element: Element): SManga =
+    override fun searchMangaFromElement(element: Element) =
         popularMangaFromElement(element)
     override fun searchMangaNextPageSelector() = popularMangaNextPageSelector()
 
@@ -63,7 +61,6 @@ class ProChan : ParsedHttpSource() {
     }
 
     /* ===== Chapters ===== */
-    // المواقع غير المخصصة للمانجا قد لا تملك قائمة فصول واضحة؛ نجمع الروابط داخل المحتوى كبدائل
     override fun chapterListSelector() = "div.entry-content a, article a"
 
     override fun chapterFromElement(element: Element): SChapter {
@@ -75,7 +72,6 @@ class ProChan : ParsedHttpSource() {
 
     /* ===== Pages ===== */
     override fun pageListParse(document: Document): List<Page> {
-        // نجمع كل الصور الظاهرة داخل المحتوى
         val imgs = document.select("div.entry-content img, article img, img")
         return imgs.mapIndexed { i, img ->
             Page(i, "", img.attr("src"))
@@ -83,4 +79,12 @@ class ProChan : ParsedHttpSource() {
     }
 
     override fun imageUrlParse(document: Document) = ""
+
+    /* ===== Required by ParsedHttpSource (newer API) ===== */
+    override fun chapterPageParse(response: Response): SChapter {
+        return SChapter.create().apply {
+            name = "Chapter"
+            url = response.request.url.toString()
+        }
+    }
 }
