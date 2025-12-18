@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "eu.kanade.tachiyomi.extension.ar.prochan"
+    namespace = "ar.prochan"
     compileSdk = 35
 
     defaultConfig {
