@@ -38,8 +38,8 @@ android {
 }
 
 dependencies {
-    // ✅ مكتبة Tachiyomi API من الجذر/libs
-    implementation files("../libs/source-api.aar")
+    // ✅ مكتبة Tachiyomi API من Maven Central
+    implementation "org.tachiyomi:source-api:1.1"
 
     // ✅ مكتبة Jsoup لمعالجة HTML
     implementation "org.jsoup:jsoup:1.17.2"
@@ -50,4 +50,3 @@ dependencies {
     // ✅ مكتبة desugaring لتوافق Java 8+
     coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:2.0.3"
 }
-
