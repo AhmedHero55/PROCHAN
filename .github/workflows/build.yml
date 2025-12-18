@@ -18,6 +18,9 @@ jobs:
       # 1) جلب مشروعك PROCHAN
       - name: Checkout PROCHAN
         uses: actions/checkout@v4
+        with:
+          repository: AhmedHero55/PROCHAN
+          path: PROCHAN
 
       # 2) جلب مشروع Mihon (المصدر الأساسي لـ source-api)
       - name: Checkout Mihon
@@ -49,4 +52,15 @@ jobs:
         shell: bash
         run: |
           set -euxo pipefail
-          cd PRO
+          cd PROCHAN
+          ./gradlew clean
+          ./gradlew :app:assembleRelease --no-daemon
+
+      # 6) رفع الـ artifacts (APK + AAR)
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: PROCHAN-build
+          path: |
+            PROCHAN/app/build/outputs/apk/release/*.apk
+            PROCHAN/app/libs/source-api.aar
