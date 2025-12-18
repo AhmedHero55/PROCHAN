@@ -1,4 +1,4 @@
 -keep class eu.kanade.tachiyomi.** { *; }
 -keep class okhttp3.** { *; }
 -keep class org.jsoup.** { *; }
--keep class eu.kanade.tachiyomi.source.model.** { *; }
+-keep class kotlin.** { *; }
