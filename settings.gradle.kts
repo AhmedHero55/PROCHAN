@@ -1,10 +1,15 @@
 pluginManagement {
     repositories {
-        gradlePluginPortal()
         google()
+        gradlePluginPortal()
         mavenCentral()
     }
+    plugins {
+        id("com.android.library") version "8.5.2"
+        kotlin("android") version "1.9.24"
+    }
 }
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -12,5 +17,6 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "prochan-extension"
-include(":app")
+
+rootProject.name = "tachiyomi-extensions-archive"
+include(":src:arabic:prochan") // عدّل المسار حسب الإضافة التي تريدها
