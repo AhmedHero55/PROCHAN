@@ -19,4 +19,6 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "tachiyomi-extensions-archive"
-include(":src:arabic:prochan") // عدّل المسار حسب الإضافة التي تريدها
+
+// ضمّن الموديول الذي تريد بناءه
+include(":src:arabic:prochan")
