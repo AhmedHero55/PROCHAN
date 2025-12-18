@@ -3,11 +3,11 @@ apply plugin: 'org.jetbrains.kotlin.android'
 
 android {
     namespace "ar.prochan"
-    compileSdk 34   // ✅ تأكدنا من وجود compileSdk
+    compileSdk 34   // ✅ مطلوب
 
     defaultConfig {
         applicationId "ar.prochan"
-        minSdk 26
+        minSdk 26    // ✅ متوافق مع source-api
         targetSdk 34
         versionCode 1
         versionName "1.0"
