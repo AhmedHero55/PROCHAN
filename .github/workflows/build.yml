@@ -11,59 +11,68 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # ✅ جلب الكود من المستودع PROCHAN
       - name: Checkout PROCHAN
         uses: actions/checkout@v4
 
-      # ✅ إعداد JDK
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      # ✅ جلب مشروع Mihon لبناء مكتبة source-api
-      - name: Checkout Mihon
+      - name: Show Java and Gradle info
+        run: |
+          java -version
+          echo "JAVA_HOME=$JAVA_HOME"
+          ./gradlew --version || true
+
+      - name: Checkout Mihon and build source-api AAR
         run: |
           git clone https://github.com/mihonapp/mihon.git
           cd mihon
-          ./gradlew :source-api:assembleRelease
+          chmod +x ./gradlew
+          ./gradlew :source-api:assembleRelease --no-daemon
 
-      # ✅ نسخ ملف AAR الناتج إلى مشروع PROCHAN
-      - name: Copy source-api-release.aar
+      - name: Copy source-api-release.aar into app/libs
         run: |
+          mkdir -p app/libs
           cp mihon/source-api/build/outputs/aar/source-api-release.aar app/libs/
 
-      # ✅ تحقق أن الملف موجود فعليًا
-      - name: Verify source-api-release.aar
+      - name: Verify source-api-release.aar exists
         run: |
           if [ ! -f app/libs/source-api-release.aar ]; then
             echo "❌ source-api-release.aar is missing in app/libs/"
             exit 1
           else
             echo "✅ source-api-release.aar found"
+            ls -l app/libs/
           fi
 
-      # ✅ إعطاء صلاحية التنفيذ لملف gradlew
       - name: Grant execute permission to gradlew
         run: chmod +x ./gradlew
 
-      # ✅ تشغيل Gradle لبناء الـ APK (نسخة release)
-      - name: Build Release APK
-        run: ./gradlew clean assembleRelease --no-daemon
+      - name: Clear Gradle caches to avoid stale Kotlin 2.0.0
+        run: |
+          rm -rf ~/.gradle/caches
+          rm -rf ~/.gradle/daemon
+          rm -rf ~/.gradle/jdks
 
-      # ✅ تشغيل Gradle لبناء الـ APK (نسخة debug)
+      - name: Build Release APK (force refresh and Kotlin 2.0.21)
+        run: |
+          ./gradlew clean \
+            assembleRelease \
+            --refresh-dependencies \
+            --no-daemon
+
       - name: Build Debug APK
         run: ./gradlew assembleDebug --no-daemon
 
-      # ✅ رفع الـ APK (release) كـ artifact باستخدام النسخة الجديدة v4
       - name: Upload Release APK
         uses: actions/upload-artifact@v4
         with:
           name: PROCHAN-release-apk
           path: app/build/outputs/apk/release/app-release.apk
 
-      # ✅ رفع الـ APK (debug) كـ artifact باستخدام النسخة الجديدة v4
       - name: Upload Debug APK
         uses: actions/upload-artifact@v4
         with:
