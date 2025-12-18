@@ -7,7 +7,6 @@
         android:allowBackup="false"
         android:supportsRtl="true">
 
-        <!-- تعريف الإضافة كمصدر Tachiyomi/Mihon -->
         <meta-data
             android:name="tachiyomi.extension.class"
             android:value="ar.prochan.ProChan" />
