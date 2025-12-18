@@ -1,2 +1,0 @@
-- name: Verify source-api AAR
-  run: ls -lh libs/
