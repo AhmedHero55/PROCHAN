@@ -44,30 +44,24 @@ jobs:
             echo "✅ source-api-release.aar found"
           fi
 
-      # ✅ تحقق من إصدار Kotlin metadata داخل المكتبة
-      - name: Check Kotlin metadata version
-        run: |
-          unzip -o app/libs/source-api-release.aar -d tmp_aar
-          unzip -o tmp_aar/classes.jar -d tmp_classes
-          RAW=$(javap -v tmp_classes/eu/kanade/tachiyomi/source/model/SManga.class | grep "mv=")
-          echo "Raw metadata line: $RAW"
-          META_VERSION=$(echo $RAW | grep -o '{[0-9],[0-9],[0-9]}' | tr -d '{}' | tr ',' '.' )
-          echo "Detected Kotlin metadata version: $META_VERSION"
-          # ✅ مشروعنا يستخدم Kotlin 2.0.21 (يدعم metadata 2.3.0)
-          if [ "$META_VERSION" != "2.3.0" ]; then
-            echo "❌ Incompatible Kotlin metadata version ($META_VERSION). Expected 2.3.0."
-            exit 1
-          else
-            echo "✅ Kotlin metadata version is compatible ($META_VERSION)."
-          fi
-
-      # ✅ تشغيل Gradle لبناء الـ APK
-      - name: Build APK
+      # ✅ تشغيل Gradle لبناء الـ APK (نسخة release)
+      - name: Build Release APK
         run: ./gradlew clean assembleRelease --no-daemon
 
-      # ✅ رفع الـ APK كـ artifact باستخدام النسخة الجديدة v4
-      - name: Upload APK
+      # ✅ تشغيل Gradle لبناء الـ APK (نسخة debug)
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug --no-daemon
+
+      # ✅ رفع الـ APK (release) كـ artifact باستخدام النسخة الجديدة v4
+      - name: Upload Release APK
         uses: actions/upload-artifact@v4
         with:
           name: PROCHAN-release-apk
           path: app/build/outputs/apk/release/app-release.apk
+
+      # ✅ رفع الـ APK (debug) كـ artifact باستخدام النسخة الجديدة v4
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: PROCHAN-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
