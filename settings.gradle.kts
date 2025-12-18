@@ -1,12 +1,8 @@
 pluginManagement {
     repositories {
         google()
-        gradlePluginPortal()
         mavenCentral()
-    }
-    plugins {
-        id("com.android.application") version "8.5.2"
-        kotlin("android") version "1.9.24"
+        gradlePluginPortal()
     }
 }
 
@@ -15,6 +11,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        // مستودعات إضافية إن كنت تستخدمها لاحقًا:
+        // maven { url = uri("https://jitpack.io") }
     }
 }
 
