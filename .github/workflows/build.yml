@@ -1,36 +1,55 @@
-name: Build PROCHAN AAR
+name: Build PROCHAN
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      # 1. جلب مشروعك PROCHAN
+      - name: Checkout PROCHAN
         uses: actions/checkout@v4
 
-      - name: Grant execute permission for Gradle Wrapper
-        run: chmod +x gradlew
+      # 2. جلب مشروع tachiyomi-extensions-archive لبناء الـ AAR
+      - name: Checkout tachiyomi-extensions-archive
+        uses: actions/checkout@v4
+        with:
+          repository: timschneeb/tachiyomi-extensions-archive
+          path: tachiyomi-extensions-archive
 
+      # 3. إعداد JDK
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
-          distribution: 'temurin'
+          distribution: temurin
+          java-version: 17
 
-      - name: Gradle cache
-        uses: gradle/actions/setup-gradle@v3
+      # 4. بناء مكتبة source-api.aar من المشروع الآخر
+      - name: Build source-api AAR
+        run: |
+          cd tachiyomi-extensions-archive
+          ./gradlew :source-api:assembleRelease --no-daemon
+          mkdir -p ../PROCHAN/app/libs
+          # حذف أي نسخة قديمة قبل النسخ
+          rm -f ../PROCHAN/app/libs/source-api.aar
+          cp source-api/build/outputs/aar/source-api-release.aar ../PROCHAN/app/libs/source-api.aar
 
-      - name: Build PROCHAN AAR
-        run: ./gradlew :app:assembleRelease --no-daemon
+      # 5. بناء مشروعك PROCHAN مع الـ AAR الجديد
+      - name: Build PROCHAN APK
+        run: |
+          cd PROCHAN
+          ./gradlew :app:assembleRelease --no-daemon
 
-      - name: Upload PROCHAN AAR
+      # 6. رفع الـ artifacts (APK + AAR)
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: prochan-release-aar
-          path: app/build/outputs/aar/*.aar
+          name: PROCHAN-build
+          path: |
+            PROCHAN/app/build/outputs/apk/release/*.apk
+            PROCHAN/app/libs/source-api.aar
