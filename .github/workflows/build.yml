@@ -23,7 +23,7 @@ jobs:
       - name: Checkout Mihon
         uses: actions/checkout@v4
         with:
-          repository: mihon-app/mihon
+          repository: mihonapp/mihon
           path: mihon
 
       # 3) إعداد JDK
@@ -49,15 +49,4 @@ jobs:
         shell: bash
         run: |
           set -euxo pipefail
-          cd PROCHAN
-          ./gradlew clean
-          ./gradlew :app:assembleRelease --no-daemon
-
-      # 6) رفع الـ artifacts (APK + AAR)
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: PROCHAN-build
-          path: |
-            PROCHAN/app/build/outputs/apk/release/*.apk
-            PROCHAN/app/libs/source-api.aar
+          cd PRO
