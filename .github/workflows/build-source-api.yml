@@ -8,23 +8,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    # ✅ جلب مستودع Mihon الرسمي
     - name: Checkout mihon repo
       uses: actions/checkout@v4
       with:
         repository: mihonapp/mihon   # المستودع الرسمي لمشروع Mihon
         path: mihon                 # ضع الملفات داخل مجلد mihon
 
-    - uses: actions/setup-java@v4
+    # ✅ إعداد JDK 17
+    - name: Setup Java
+      uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
         java-version: '17'
 
+    # ✅ إعطاء صلاحيات للـ gradlew
     - name: Grant permission
       run: chmod +x mihon/gradlew
 
+    # ✅ بناء مكتبة source-api
     - name: Build source-api
-      run: cd mihon && ./gradlew :source-api:assembleRelease
+      run: cd mihon && ./gradlew :source-api:assembleRelease --no-daemon
 
+    # ✅ رفع ملف AAR الناتج كـ artifact
     - name: Upload source-api AAR
       uses: actions/upload-artifact@v4
       with:
