@@ -41,9 +41,17 @@ jobs:
           mkdir -p libs
           cp mihon/source-api/build/outputs/aar/source-api-release.aar libs/source-api.aar
 
+      # ✅ Verify that AAR exists
+      - name: Verify source-api AAR
+        run: ls -lh libs/
+
       # ✅ Grant permission for gradlew
       - name: Grant permission
         run: chmod +x gradlew
+
+      # ✅ Clean Gradle cache
+      - name: Clean Gradle cache
+        run: ./gradlew clean --no-daemon
 
       # ✅ Build extension APK
       - name: Build extension APK
