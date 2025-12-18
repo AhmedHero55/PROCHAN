@@ -11,8 +11,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # ✅ جلب الكود من المستودع
-      - name: Checkout
+      # ✅ جلب الكود من المستودع PROCHAN
+      - name: Checkout PROCHAN
         uses: actions/checkout@v4
 
       # ✅ إعداد JDK
@@ -22,14 +22,17 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # ✅ تأكد أن مجلد libs موجود
-      - name: Ensure libs directory
-        run: mkdir -p app/libs
-
-      # ✅ تحميل ملف الـ AAR من Google Drive (استبدل الرابط برابطك المباشر)
-      - name: Download source-api-release.aar
+      # ✅ جلب مشروع Mihon لبناء مكتبة source-api
+      - name: Checkout Mihon
         run: |
-          curl -L -o app/libs/source-api-release.aar "https://drive.google.com/uc?export=download&id=1dTF409ISCt_ALYo37YZsBIdvONytQNVn"
+          git clone https://github.com/mihonapp/mihon.git
+          cd mihon
+          ./gradlew :source-api:assembleRelease
+
+      # ✅ نسخ ملف AAR الناتج إلى مشروع PROCHAN
+      - name: Copy source-api-release.aar
+        run: |
+          cp mihon/source-api/build/outputs/aar/source-api-release.aar app/libs/
 
       # ✅ تحقق أن الملف موجود فعليًا
       - name: Verify source-api-release.aar
