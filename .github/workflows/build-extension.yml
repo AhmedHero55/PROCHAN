@@ -1,71 +1,53 @@
-name: Build Tachiyomi Extension APK
+plugins {
+    id "com.android.application"
+    id "org.jetbrains.kotlin.android"
+}
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+android {
+    namespace "ar.prochan"
+    compileSdk 34
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+    defaultConfig {
+        applicationId "ar.prochan"
+        minSdk 21
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+    }
 
-    steps:
-      # ✅ جلب الكود من المستودع PROCHAN
-      - name: Checkout PROCHAN
-        uses: actions/checkout@v4
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+        }
+        debug {
+            minifyEnabled false
+        }
+    }
 
-      # ✅ إعداد JDK
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+        // ✅ تفعيل desugaring
+        coreLibraryDesugaringEnabled true
+    }
 
-      # ✅ جلب مشروع Mihon لبناء مكتبة source-api
-      - name: Checkout Mihon
-        run: |
-          git clone https://github.com/mihonapp/mihon.git
-          cd mihon
-          ./gradlew :source-api:assembleRelease
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+}
 
-      # ✅ نسخ ملف AAR الناتج إلى مشروع PROCHAN
-      - name: Copy source-api-release.aar
-        run: |
-          cp mihon/source-api/build/outputs/aar/source-api-release.aar app/libs/
+dependencies {
+    // ✅ مكتبة Tachiyomi API
+    implementation fileTree(dir: "libs", include: ["*.aar"])
 
-      # ✅ تحقق أن الملف موجود فعليًا
-      - name: Verify source-api-release.aar
-        run: |
-          if [ ! -f app/libs/source-api-release.aar ]; then
-            echo "❌ source-api-release.aar is missing in app/libs/"
-            exit 1
-          else
-            echo "✅ source-api-release.aar found"
-          fi
+    // ✅ Kotlin متوافق مع metadata 2.3.0
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:2.0.21"
 
-      # ✅ إعطاء صلاحية التنفيذ لملف gradlew
-      - name: Grant execute permission to gradlew
-        run: chmod +x ./gradlew
+    // ✅ مكتبات إضافية
+    implementation "org.jsoup:jsoup:1.17.2"
+    implementation "com.squareup.okhttp3:okhttp:4.12.0"
 
-      # ✅ تشغيل Gradle لبناء الـ APK (نسخة release)
-      - name: Build Release APK
-        run: ./gradlew clean assembleRelease --no-daemon
-
-      # ✅ تشغيل Gradle لبناء الـ APK (نسخة debug)
-      - name: Build Debug APK
-        run: ./gradlew assembleDebug --no-daemon
-
-      # ✅ رفع الـ APK (release) كـ artifact باستخدام النسخة الجديدة v4
-      - name: Upload Release APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: PROCHAN-release-apk
-          path: app/build/outputs/apk/release/app-release.apk
-
-      # ✅ رفع الـ APK (debug) كـ artifact باستخدام النسخة الجديدة v4
-      - name: Upload Debug APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: PROCHAN-debug-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+    // ✅ مكتبة desugaring المطلوبة
+    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:2.1.2"
+}
