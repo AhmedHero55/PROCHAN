@@ -1,9 +1,6 @@
-apply plugin: 'com.android.application'
-apply plugin: 'org.jetbrains.kotlin.android'
-
 android {
     namespace "ar.prochan"
-    compileSdk 34   // ✅ أضفنا compileSdk لتفادي الخطأ
+    compileSdk 34
 
     defaultConfig {
         applicationId "ar.prochan"
@@ -16,6 +13,8 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
+        // ✅ تفعيل desugaring
+        coreLibraryDesugaringEnabled true
     }
 
     kotlinOptions {
@@ -34,15 +33,4 @@ android {
             minifyEnabled false
         }
     }
-}
-
-dependencies {
-    // ✅ مكتبة Tachiyomi API
-    implementation files("../libs/source-api.aar")
-
-    // ✅ مكتبة Jsoup لمعالجة HTML
-    implementation "org.jsoup:jsoup:1.17.2"
-
-    // ✅ مكتبة OkHttp لمعالجة الطلبات
-    implementation "com.squareup.okhttp3:okhttp:4.12.0"
 }
