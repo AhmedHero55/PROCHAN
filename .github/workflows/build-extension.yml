@@ -1,4 +1,4 @@
-name: Build Tachiyomi Extension APK (with source-api)
+name: Build Tachiyomi Extension APK (with external source-api)
 
 on:
   push:
@@ -21,25 +21,25 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      # ✅ Checkout Mihon repo to build source-api
-      - name: Checkout mihon repo
+      # ✅ Checkout المشروع الآخر الذي يحتوي على مكتبة source-api
+      - name: Checkout external source-api repo
         uses: actions/checkout@v4
         with:
-          repository: mihonapp/mihon
-          path: mihon
+          repository: AhmedHero55/SourceAPIProject   # 🔁 ضع هنا اسم المستودع الصحيح
+          path: sourceapi
 
-      # ✅ Build source-api AAR
+      # ✅ Build source-api AAR من المشروع الآخر
       - name: Build source-api AAR
         run: |
-          chmod +x mihon/gradlew
-          cd mihon
+          chmod +x sourceapi/gradlew
+          cd sourceapi
           ./gradlew :source-api:assembleRelease --no-daemon
 
       # ✅ Copy AAR into extension libs
       - name: Copy source-api AAR into extension libs
         run: |
           mkdir -p libs
-          cp mihon/source-api/build/outputs/aar/source-api-release.aar libs/source-api.aar
+          cp sourceapi/source-api/build/outputs/aar/source-api-release.aar libs/source-api.aar
 
       # ✅ Verify that AAR exists
       - name: Verify source-api AAR
