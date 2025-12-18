@@ -1,0 +1,57 @@
+name: Build Tachiyomi Extension APK (with source-api)
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout your extension repo
+      - name: Checkout extension repo
+        uses: actions/checkout@v4
+
+      # Setup Java 17
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # Checkout Mihon repo to build source-api
+      - name: Checkout mihon repo
+        uses: actions/checkout@v4
+        with:
+          repository: mihonapp/mihon
+          path: mihon
+
+      # Build source-api AAR
+      - name: Build source-api AAR
+        run: |
+          chmod +x mihon/gradlew
+          cd mihon
+          ./gradlew :source-api:assembleRelease --no-daemon
+
+      # Copy AAR into your repo libs/
+      - name: Copy source-api AAR into extension libs
+        run: |
+          mkdir -p libs
+          cp mihon/source-api/build/outputs/aar/source-api-release.aar libs/source-api.aar
+
+      # Grant permission for gradlew
+      - name: Grant permission
+        run: chmod +x gradlew
+
+      # Build extension APK
+      - name: Build extension APK
+        run: ./gradlew assembleRelease --no-daemon
+
+      # Upload built APK
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: prochan-extension-apk
+          path: app/build/outputs/apk/release/*.apk
