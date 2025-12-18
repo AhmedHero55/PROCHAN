@@ -13,11 +13,11 @@ jobs:
     steps:
       # ✅ جلب الكود من المستودع
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # ✅ إعداد JDK
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
@@ -26,7 +26,7 @@ jobs:
       - name: Ensure libs directory
         run: mkdir -p app/libs
 
-      # ✅ تحميل ملف الـ AAR من Google Drive (لو ما رفعته في المستودع)
+      # ✅ تحميل ملف الـ AAR من Google Drive (استبدل الرابط برابطك المباشر)
       - name: Download source-api-release.aar
         run: |
           curl -L -o app/libs/source-api-release.aar "https://drive.google.com/uc?export=download&id=1dTF409ISCt_ALYo37YZsBIdvONytQNVn"
@@ -60,9 +60,9 @@ jobs:
       - name: Build APK
         run: ./gradlew clean assembleRelease --no-daemon
 
-      # ✅ رفع الـ APK كـ artifact جاهز للتحميل
+      # ✅ رفع الـ APK كـ artifact باستخدام النسخة الجديدة v4
       - name: Upload APK
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: PROCHAN-release-apk
           path: app/build/outputs/apk/release/app-release.apk
