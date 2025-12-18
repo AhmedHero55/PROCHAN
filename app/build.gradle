@@ -40,8 +40,8 @@ android {
 }
 
 dependencies {
-    // ✅ مكتبة Tachiyomi API من Maven Central
-    implementation "org.tachiyomi:source-api:1.1"
+    // ✅ مكتبة Tachiyomi API من JitPack
+    implementation "com.github.inorichi.tachiyomi:source-api:1.1"
 
     // ✅ مكتبة Jsoup لمعالجة HTML
     implementation "org.jsoup:jsoup:1.17.2"
