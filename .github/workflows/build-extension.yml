@@ -27,7 +27,6 @@ jobs:
         run: mkdir -p app/libs
 
       # ✅ تحميل ملف الـ AAR من Google Drive (لو ما رفعته في المستودع)
-      # استبدل الرابط المباشر برابطك الخاص
       - name: Download source-api-release.aar
         run: |
           curl -L -o app/libs/source-api-release.aar "https://drive.google.com/uc?export=download&id=1dTF409ISCt_ALYo37YZsBIdvONytQNVn"
@@ -42,11 +41,26 @@ jobs:
             echo "✅ source-api-release.aar found"
           fi
 
+      # ✅ تحقق من إصدار Kotlin metadata داخل المكتبة
+      - name: Check Kotlin metadata version
+        run: |
+          unzip -o app/libs/source-api-release.aar -d tmp_aar
+          unzip -o tmp_aar/classes.jar -d tmp_classes
+          META_VERSION=$(javap -v tmp_classes/eu/kanade/tachiyomi/source/model/SManga.class | grep "mv=" | sed -E 's/.*mv=\{([0-9]+),([0-9]+),([0-9]+)\}.*/\1.\2.\3/')
+          echo "Detected Kotlin metadata version: $META_VERSION"
+          # ✅ مشروعنا يستخدم Kotlin 2.0.21 (يدعم metadata 2.3.0)
+          if [ "$META_VERSION" != "2.3.0" ]; then
+            echo "❌ Incompatible Kotlin metadata version ($META_VERSION). Expected 2.3.0."
+            exit 1
+          else
+            echo "✅ Kotlin metadata version is compatible ($META_VERSION)."
+          fi
+
       # ✅ تشغيل Gradle لبناء الـ APK
       - name: Build APK
         run: ./gradlew clean assembleRelease --no-daemon
 
-      # ✅ رفع الـ APK كـ artifact
+      # ✅ رفع الـ APK كـ artifact جاهز للتحميل
       - name: Upload APK
         uses: actions/upload-artifact@v3
         with:
