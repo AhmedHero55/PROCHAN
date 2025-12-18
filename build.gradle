@@ -25,6 +25,8 @@ android {
 }
 
 dependencies {
+    // مكتبة Tachiyomi API (يجب أن تكون صحيحة وليست تالفة)
     compileOnly files("libs/source-api.aar")
+    // مكتبة Jsoup لتحليل HTML
     compileOnly "org.jsoup:jsoup:1.17.2"
 }
