@@ -5,11 +5,10 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        // ✅ Android Gradle Plugin
         classpath "com.android.tools.build:gradle:8.2.2"
 
-        // ✅ Kotlin Plugin (نسخة متوافقة مع R8/D8)
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.24"
+        // ✅ استخدم نسخة حديثة من Kotlin متوافقة مع metadata 2.3.0
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.21"
     }
 }
 
