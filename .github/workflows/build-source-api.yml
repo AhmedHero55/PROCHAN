@@ -1,14 +1,18 @@
 name: Build source-api AAR
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:   # تشغيل يدوي من صفحة Actions
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout mihon repo
+      uses: actions/checkout@v4
+      with:
+        repository: mihonapp/mihon   # المستودع الرسمي لمشروع Mihon
+        path: mihon                 # ضع الملفات داخل مجلد mihon
 
     - uses: actions/setup-java@v4
       with:
@@ -16,12 +20,13 @@ jobs:
         java-version: '17'
 
     - name: Grant permission
-      run: chmod +x gradlew
+      run: chmod +x mihon/gradlew
 
     - name: Build source-api
-      run: ./gradlew :source-api:assembleRelease
+      run: cd mihon && ./gradlew :source-api:assembleRelease
 
-    - uses: actions/upload-artifact@v4
+    - name: Upload source-api AAR
+      uses: actions/upload-artifact@v4
       with:
         name: source-api-aar
-        path: source-api/build/outputs/aar/*.aar
+        path: mihon/source-api/build/outputs/aar/*.aar
