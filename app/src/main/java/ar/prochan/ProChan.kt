@@ -16,6 +16,7 @@ class ProChan : ParsedHttpSource() {
 
     override fun popularMangaRequest(page: Int): Request = GET(baseUrl, headers)
     override fun popularMangaSelector() = "div.post, article.post"
+
     override fun popularMangaFromElement(element: Element): SManga {
         return SManga.create().apply {
             title = element.selectFirst("h2 a, h1 a")?.text()?.trim().orEmpty()
@@ -23,6 +24,7 @@ class ProChan : ParsedHttpSource() {
             thumbnail_url = element.selectFirst("img")?.attr("src")
         }
     }
+
     override fun popularMangaNextPageSelector() = "a.next, a.nextpostslink"
 
     override fun latestUpdatesRequest(page: Int): Request = GET(baseUrl, headers)
@@ -33,6 +35,7 @@ class ProChan : ParsedHttpSource() {
     override fun searchMangaRequest(page: Int, query: String, filters: FilterList): Request {
         return GET("$baseUrl/?s=$query", headers)
     }
+
     override fun searchMangaSelector() = popularMangaSelector()
     override fun searchMangaFromElement(element: Element) = popularMangaFromElement(element)
     override fun searchMangaNextPageSelector() = popularMangaNextPageSelector()
@@ -46,6 +49,7 @@ class ProChan : ParsedHttpSource() {
     }
 
     override fun chapterListSelector() = "div.entry-content a, article a"
+
     override fun chapterFromElement(element: Element): SChapter {
         return SChapter.create().apply {
             name = element.text().trim().ifEmpty {
@@ -62,6 +66,7 @@ class ProChan : ParsedHttpSource() {
 
     override fun imageUrlParse(document: Document) = ""
 
+    // Some ParsedHttpSource versions may require this; safe default implementation
     override fun chapterPageParse(response: Response): SChapter {
         return SChapter.create().apply {
             name = "Chapter"
