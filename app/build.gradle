@@ -3,7 +3,7 @@ apply plugin: 'org.jetbrains.kotlin.android'
 
 android {
     namespace "ar.prochan"
-    compileSdk 34
+    compileSdk 34   // ✅ أضفنا compileSdk لتفادي الخطأ
 
     defaultConfig {
         applicationId "ar.prochan"
@@ -21,10 +21,28 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles(
+                getDefaultProguardFile('proguard-android.txt'),
+                'proguard-rules.pro'
+            )
+        }
+        debug {
+            minifyEnabled false
+        }
+    }
 }
 
 dependencies {
+    // ✅ مكتبة Tachiyomi API
     implementation files("../libs/source-api.aar")
+
+    // ✅ مكتبة Jsoup لمعالجة HTML
     implementation "org.jsoup:jsoup:1.17.2"
+
+    // ✅ مكتبة OkHttp لمعالجة الطلبات
     implementation "com.squareup.okhttp3:okhttp:4.12.0"
 }
