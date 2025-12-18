@@ -3,39 +3,52 @@ name: Build Tachiyomi Extension APK
 on:
   push:
     branches: [ "main" ]
-  workflow_dispatch:
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # ✅ Checkout extension repo
-      - name: Checkout extension repo
-        uses: actions/checkout@v4
+      # ✅ جلب الكود من المستودع
+      - name: Checkout
+        uses: actions/checkout@v3
 
-      # ✅ Setup Java 17
-      - name: Setup Java
-        uses: actions/setup-java@v4
+      # ✅ إعداد JDK
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
           java-version: '17'
+          distribution: 'temurin'
 
-      # ✅ Grant permission for gradlew
-      - name: Grant permission
-        run: chmod +x gradlew
+      # ✅ تأكد أن مجلد libs موجود
+      - name: Ensure libs directory
+        run: mkdir -p app/libs
 
-      # ✅ Clean Gradle cache
-      - name: Clean Gradle cache
-        run: ./gradlew clean --no-daemon
+      # ✅ تحميل ملف الـ AAR من Google Drive (لو ما رفعته في المستودع)
+      # استبدل الرابط المباشر برابطك الخاص
+      - name: Download source-api-release.aar
+        run: |
+          curl -L -o app/libs/source-api-release.aar "https://drive.google.com/uc?export=download&id=1dTF409ISCt_ALYo37YZsBIdvONytQNVn"
 
-      # ✅ Build extension APK
-      - name: Build extension APK
-        run: ./gradlew assembleRelease --no-daemon
+      # ✅ تحقق أن الملف موجود فعليًا
+      - name: Verify source-api-release.aar
+        run: |
+          if [ ! -f app/libs/source-api-release.aar ]; then
+            echo "❌ source-api-release.aar is missing in app/libs/"
+            exit 1
+          else
+            echo "✅ source-api-release.aar found"
+          fi
 
-      # ✅ Upload built APK
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
+      # ✅ تشغيل Gradle لبناء الـ APK
+      - name: Build APK
+        run: ./gradlew clean assembleRelease --no-daemon
+
+      # ✅ رفع الـ APK كـ artifact
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
         with:
-          name: prochan-extension-apk
-          path: app/build/outputs/apk/release/*.apk
+          name: PROCHAN-release-apk
+          path: app/build/outputs/apk/release/app-release.apk
