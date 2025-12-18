@@ -7,7 +7,7 @@ buildscript {
     dependencies {
         classpath "com.android.tools.build:gradle:8.2.2"
 
-        // ✅ استخدم نسخة حديثة من Kotlin متوافقة مع metadata 2.3.0
+        // ✅ نسخة حديثة من Kotlin متوافقة مع metadata 2.3.0
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.21"
     }
 }
