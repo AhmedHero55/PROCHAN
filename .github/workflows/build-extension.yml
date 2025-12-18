@@ -44,6 +44,10 @@ jobs:
             echo "✅ source-api-release.aar found"
           fi
 
+      # ✅ إعطاء صلاحية التنفيذ لملف gradlew
+      - name: Grant execute permission to gradlew
+        run: chmod +x ./gradlew
+
       # ✅ تشغيل Gradle لبناء الـ APK (نسخة release)
       - name: Build Release APK
         run: ./gradlew clean assembleRelease --no-daemon
