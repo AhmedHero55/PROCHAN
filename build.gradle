@@ -25,6 +25,6 @@ android {
 }
 
 dependencies {
-    compileOnly files("libs/source-api.aar")   // مكتبة Tachiyomi API
-    compileOnly "org.jsoup:jsoup:1.17.2"       // لتحليل HTML
+    compileOnly files("libs/source-api.aar")
+    compileOnly "org.jsoup:jsoup:1.17.2"
 }
