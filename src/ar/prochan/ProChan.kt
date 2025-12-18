@@ -79,4 +79,3 @@ class ProChan : ParsedHttpSource() {
 
     override fun imageUrlParse(document: Document) = ""
 }
-
