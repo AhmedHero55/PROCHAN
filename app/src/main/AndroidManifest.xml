@@ -1,28 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
-
+<manifest package="ar.prochan" xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="ProChan"
-        android:icon="@android:drawable/ic_menu_info_details"
-        android:allowBackup="false"
-        android:supportsRtl="true">
-
-        <meta-data
-            android:name="tachiyomi.extension.class"
-            android:value="ar.prochan.ProChan" />
-
-        <meta-data
-            android:name="tachiyomi.extension.name"
-            android:value="ProChan" />
-
-        <meta-data
-            android:name="tachiyomi.extension.pkg"
-            android:value="ar.prochan" />
-
-        <meta-data
-            android:name="tachiyomi.extension.version"
-            android:value="1.0" />
-
+        android:label="Prochan"
+        android:icon="@mipmap/ic_launcher"
+        android:allowBackup="false">
+        <!-- عادةً لا حاجة لتعريف أنشطة؛ الإضافة تُحمّل كـ extension -->
     </application>
-
 </manifest>
