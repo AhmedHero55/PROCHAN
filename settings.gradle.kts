@@ -5,7 +5,7 @@ pluginManagement {
         mavenCentral()
     }
     plugins {
-        id("com.android.library") version "8.5.2"
+        id("com.android.application") version "8.5.2"
         kotlin("android") version "1.9.24"
     }
 }
@@ -18,7 +18,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "tachiyomi-extensions-archive"
-
-// ضمّن الموديول الذي تريد بناءه
-include(":src:arabic:prochan")
+rootProject.name = "PROCHAN"
+include(":app")
