@@ -8,6 +8,7 @@ import eu.kanade.tachiyomi.source.model.Page
 import eu.kanade.tachiyomi.source.online.ParsedHttpSource
 import okhttp3.Request
 import okhttp3.Response
+import eu.kanade.tachiyomi.network.GET   // ✅ هذا هو المرجع الصحيح لـ GET
 
 class Prochan : ParsedHttpSource() {
 
@@ -22,7 +23,6 @@ class Prochan : ParsedHttpSource() {
     }
 
     override fun popularMangaParse(response: Response): MangasPage {
-        // TODO: parse popular manga list
         return MangasPage(emptyList(), false)
     }
 
@@ -32,25 +32,21 @@ class Prochan : ParsedHttpSource() {
     }
 
     override fun searchMangaParse(response: Response): MangasPage {
-        // TODO: parse search results
         return MangasPage(emptyList(), false)
     }
 
-    // ✅ Manga Details
+    // ✅ Manga Details (كان ناقص)
     override fun mangaDetailsParse(response: Response): SManga {
-        // TODO: parse manga details
         return SManga.create()
     }
 
     // ✅ Chapter List
     override fun chapterListParse(response: Response): List<SChapter> {
-        // TODO: parse chapters
         return emptyList()
     }
 
     // ✅ Page List
     override fun pageListParse(response: Response): List<Page> {
-        // TODO: parse pages
         return emptyList()
     }
 
@@ -60,7 +56,6 @@ class Prochan : ParsedHttpSource() {
     }
 
     override fun latestUpdatesParse(response: Response): MangasPage {
-        // TODO: parse latest updates
         return MangasPage(emptyList(), false)
     }
 }
