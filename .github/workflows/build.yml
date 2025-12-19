@@ -42,7 +42,7 @@ jobs:
           test -f PROCHAN/build.gradle.kts
           test -f PROCHAN/gradle.properties
           test -f PROCHAN/app/src/main/AndroidManifest.xml
-          test -f PROCHAN/app/src/main/java/ar/prochan/ProChan.kt
+          test -f PROCHAN/app/src/main/java/ar.prochan/ProChan.kt || test -f PROCHAN/app/src/main/java/ar/prochan/ProChan.kt
 
       - name: Fix Manifest (remove roundIcon if exists)
         run: sed -i '/android:roundIcon/d' PROCHAN/app/src/main/AndroidManifest.xml
