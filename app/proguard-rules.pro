@@ -1,25 +1,28 @@
-# ✅ احتفظ بكلاس Prochan كاملاً مع كل الدوال
+# ✅ منع حذف كلاس الإضافة الرئيسي
 -keep class ar.prochan.Prochan { *; }
 
-# ✅ احتفظ بجميع الكلاسات الخاصة بـ Tachiyomi Source API
+# ✅ منع حذف جميع الكلاسات والدوال الخاصة بمكتبة Tachiyomi Source API
 -keep class eu.kanade.tachiyomi.source.** { *; }
+
+# ✅ منع حذف جميع الكلاسات الخاصة بالنماذج (SManga, SChapter, Page, FilterList)
 -keep class eu.kanade.tachiyomi.source.model.** { *; }
--keep class eu.kanade.tachiyomi.source.online.ParsedHttpSource { *; }
--keep class eu.kanade.tachiyomi.source.online.HttpSource { *; }
 
-# ✅ احتفظ بجميع الكلاسات الخاصة بـ okhttp و jsoup
--keep class okhttp3.** { *; }
--keep class org.jsoup.** { *; }
-
-# ✅ المكتبات المضافة لحل المفقودات
--keep class io.reactivex.** { *; }
+# ✅ منع حذف مكتبات kotlinx.serialization
 -keep class kotlinx.serialization.** { *; }
+
+# ✅ منع حذف مكتبات injekt
 -keep class uy.kohesive.injekt.** { *; }
 
-# ✅ لا تحذف أي دوال أو حقول مشروطة بـ @Keep
--keep @androidx.annotation.Keep class * { *; }
+# ✅ منع حذف مكتبات RxJava
+-keep class rx.** { *; }
 
-# ✅ احتفظ بجميع الـ constructors العامة
+# ✅ منع حذف مكتبات okhttp
+-keep class okhttp3.** { *; }
+
+# ✅ منع حذف مكتبات jsoup
+-keep class org.jsoup.** { *; }
+
+# ✅ منع حذف أي دوال أو كائنات داخل الكلاسات
 -keepclassmembers class * {
-    public <init>(...);
+    <init>(...);
 }
