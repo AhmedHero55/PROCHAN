@@ -8,7 +8,7 @@ import eu.kanade.tachiyomi.source.model.Page
 import eu.kanade.tachiyomi.source.online.ParsedHttpSource
 import okhttp3.Request
 import okhttp3.Response
-import eu.kanade.tachiyomi.util.GET   // ✅ هذا هو المرجع الصحيح لـ GET داخل مكتبة Tachiyomi API
+import okhttp3.HttpUrl.Companion.toHttpUrl
 
 class Prochan : ParsedHttpSource() {
 
@@ -19,7 +19,10 @@ class Prochan : ParsedHttpSource() {
 
     // ✅ Popular Manga
     override fun popularMangaRequest(page: Int): Request {
-        return GET("$baseUrl/popular?page=$page")
+        return Request.Builder()
+            .url("$baseUrl/popular?page=$page".toHttpUrl())
+            .get()
+            .build()
     }
 
     override fun popularMangaParse(response: Response): MangasPage {
@@ -28,7 +31,10 @@ class Prochan : ParsedHttpSource() {
 
     // ✅ Search Manga
     override fun searchMangaRequest(page: Int, query: String, filters: FilterList): Request {
-        return GET("$baseUrl/search?query=$query&page=$page")
+        return Request.Builder()
+            .url("$baseUrl/search?query=$query&page=$page".toHttpUrl())
+            .get()
+            .build()
     }
 
     override fun searchMangaParse(response: Response): MangasPage {
@@ -52,7 +58,10 @@ class Prochan : ParsedHttpSource() {
 
     // ✅ Latest Updates
     override fun latestUpdatesRequest(page: Int): Request {
-        return GET("$baseUrl/latest?page=$page")
+        return Request.Builder()
+            .url("$baseUrl/latest?page=$page".toHttpUrl())
+            .get()
+            .build()
     }
 
     override fun latestUpdatesParse(response: Response): MangasPage {
