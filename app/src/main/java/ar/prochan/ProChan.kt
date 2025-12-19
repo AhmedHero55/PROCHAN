@@ -1,9 +1,6 @@
 package ar.prochan
 
-import eu.kanade.tachiyomi.source.model.Page
-import eu.kanade.tachiyomi.source.model.SChapter
-import eu.kanade.tachiyomi.source.model.SManga
-import eu.kanade.tachiyomi.source.model.FilterList
+import eu.kanade.tachiyomi.source.model.*
 import eu.kanade.tachiyomi.source.online.ParsedHttpSource
 import okhttp3.Request
 import okhttp3.Response
@@ -18,7 +15,6 @@ class Prochan : ParsedHttpSource() {
     override val lang = "ar"
     override val supportsLatest = true
 
-    // Requests
     override fun popularMangaRequest(page: Int): Request =
         Request.Builder().url("$baseUrl/popular?page=$page").build()
 
@@ -34,9 +30,7 @@ class Prochan : ParsedHttpSource() {
         return Request.Builder().url(url).build()
     }
 
-    // Search
     override fun searchMangaSelector(): String = "div.manga-item"
-
     override fun searchMangaFromElement(element: Element): SManga {
         return SManga.create().apply {
             title = element.selectFirst("h3.title")?.text() ?: ""
@@ -44,20 +38,16 @@ class Prochan : ParsedHttpSource() {
             url = element.selectFirst("a")?.attr("href") ?: ""
         }
     }
-
     override fun searchMangaNextPageSelector(): String? = "a.next"
 
-    // Popular
     override fun popularMangaSelector(): String = "div.manga-item"
     override fun popularMangaFromElement(element: Element): SManga = searchMangaFromElement(element)
     override fun popularMangaNextPageSelector(): String? = "a.next"
 
-    // Latest
     override fun latestUpdatesSelector(): String = "div.manga-item"
     override fun latestUpdatesFromElement(element: Element): SManga = searchMangaFromElement(element)
     override fun latestUpdatesNextPageSelector(): String? = "a.next"
 
-    // Details
     override fun mangaDetailsParse(document: Document): SManga {
         return SManga.create().apply {
             title = document.selectFirst("h1.title")?.text() ?: ""
@@ -69,9 +59,7 @@ class Prochan : ParsedHttpSource() {
         }
     }
 
-    // Chapters
     override fun chapterListSelector(): String = "ul.chapters li"
-
     override fun chapterFromElement(element: Element): SChapter {
         return SChapter.create().apply {
             name = element.selectFirst("a")?.text() ?: ""
@@ -79,7 +67,7 @@ class Prochan : ParsedHttpSource() {
         }
     }
 
-    // Required by your AAR
+    // ✅ توقيع صحيح حسب الـ AAR
     override fun chapterPageParse(response: Response): SChapter {
         val document = response.asJsoupSafe()
         return SChapter.create().apply {
@@ -88,7 +76,6 @@ class Prochan : ParsedHttpSource() {
         }
     }
 
-    // Pages
     override fun pageListParse(document: Document): List<Page> {
         return document.select("img.page-image").mapIndexed { index, element ->
             Page(index, "", element.attr("src"))
@@ -99,7 +86,6 @@ class Prochan : ParsedHttpSource() {
         return document.selectFirst("img.page-image")?.attr("src") ?: ""
     }
 
-    // Helper
     private fun Response.asJsoupSafe(): Document {
         val bodyStr = this.body?.string() ?: ""
         return Jsoup.parse(bodyStr)
