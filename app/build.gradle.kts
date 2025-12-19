@@ -29,6 +29,23 @@ android {
         }
     }
 
+    // تفادي تعارضات موارد محتملة من AAR (اختياري لكنه مفيد)
+    packaging {
+        resources {
+            // استبعاد ميتا إنف مصادر متعارضة إن ظهرت
+            excludes += listOf(
+                "META-INF/DEPENDENCIES",
+                "META-INF/LICENSE",
+                "META-INF/LICENSE.txt",
+                "META-INF/license.txt",
+                "META-INF/NOTICE",
+                "META-INF/NOTICE.txt",
+                "META-INF/notice.txt",
+                "META-INF/*.kotlin_module"
+            )
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -37,11 +54,13 @@ android {
 
     kotlinOptions {
         jvmTarget = "17"
+        // إبقاءه يساعدنا مع AAR قديم لتجنب أخطاء metadata
         freeCompilerArgs += listOf("-Xskip-metadata-version-check")
     }
 }
 
 dependencies {
+    // AAR الخاص بـ Tachiyomi Source API
     implementation(files("libs/source-api.aar"))
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
