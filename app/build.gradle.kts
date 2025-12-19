@@ -5,10 +5,10 @@ plugins {
 
 android {
     namespace = "ar.prochan"
-    compileSdk = 34
+    compileSdk = 35   // ✅ تحديث إلى 35 لحل مشكلة androidx.core
 
     defaultConfig {
-        applicationId = "ar.prochan"   // ✅ صيغة صحيحة بحروف صغيرة
+        applicationId = "ar.prochan"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
@@ -17,7 +17,7 @@ android {
 
     buildTypes {
         release {
-            // ✅ استخدم SigningConfig debug الافتراضي
+            // ✅ استخدم توقيع debug الافتراضي حتى يكون APK صالح للتثبيت مباشرة
             signingConfig = signingConfigs.getByName("debug")
             isMinifyEnabled = false
             proguardFiles(
@@ -28,6 +28,12 @@ android {
         debug {
             signingConfig = signingConfigs.getByName("debug")
         }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+        isCoreLibraryDesugaringEnabled = true   // ✅ تفعيل desugaring
     }
 
     kotlin {
@@ -43,7 +49,10 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
 
-    // ✅ مكتبات Tachiyomi Source API
+    // ✅ مكتبة desugaring المطلوبة
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.2")
+
+    // ✅ مكتبة Tachiyomi Source API
     implementation(files("libs/source-api.aar"))
 
     // ✅ مكتبات إضافية لحل المفقودات
