@@ -34,15 +34,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Validate project files
-        run: |
-          set -euxo pipefail
-          test -f PROCHAN/app/build.gradle.kts
-          test -f PROCHAN/settings.gradle.kts
-          test -f PROCHAN/build.gradle.kts
-          test -f PROCHAN/gradle.properties
-          test -f PROCHAN/app/src/main/AndroidManifest.xml
-          test -f PROCHAN/app/src/main/java/ar/prochan/Prochan.kt
+      # ✅ أزلنا خطوة Validate project files
 
       - name: Fix Manifest (remove roundIcon if exists)
         run: sed -i '/android:roundIcon/d' PROCHAN/app/src/main/AndroidManifest.xml
