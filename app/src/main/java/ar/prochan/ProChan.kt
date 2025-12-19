@@ -8,7 +8,7 @@ import eu.kanade.tachiyomi.source.model.Page
 import eu.kanade.tachiyomi.source.online.ParsedHttpSource
 import okhttp3.Request
 import okhttp3.Response
-import eu.kanade.tachiyomi.network.GET   // ✅ هذا هو المرجع الصحيح لـ GET
+import eu.kanade.tachiyomi.util.GET   // ✅ هذا هو المرجع الصحيح لـ GET داخل مكتبة Tachiyomi API
 
 class Prochan : ParsedHttpSource() {
 
