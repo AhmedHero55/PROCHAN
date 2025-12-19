@@ -19,7 +19,7 @@ class Prochan : ParsedHttpSource() {
     // ✅ Popular Manga
     override fun popularMangaRequest(page: Int): Request {
         return Request.Builder()
-            .url("$baseUrl/series?page=$page".toHttpUrl())
+            .url("$baseUrl/series/" + if (page > 1) "?page=$page" else "")
             .get()
             .build()
     }
@@ -38,10 +38,38 @@ class Prochan : ParsedHttpSource() {
 
     override fun popularMangaNextPageSelector() = "a[rel=next]"
 
+    // ✅ Latest Updates
+    override fun latestUpdatesRequest(page: Int): Request {
+        return Request.Builder()
+            .url(baseUrl + if (page > 1) "?page=$page" else "")
+            .get()
+            .build()
+    }
+
+    override fun latestUpdatesSelector() = "div.last-chapter div.box"
+
+    override fun latestUpdatesFromElement(element: Element): SManga {
+        return SManga.create().apply {
+            val linkElement = element.select("div.info a")
+            title = linkElement.select("h3").text()
+            setUrlWithoutDomain(linkElement.first()!!.attr("href"))
+            thumbnail_url = element.select("div.imgu img").first()!!.absUrl("src")
+        }
+    }
+
+    override fun latestUpdatesNextPageSelector() = popularMangaNextPageSelector()
+
+    override fun latestUpdatesParse(response: Response): MangasPage {
+        val doc = Jsoup.parse(response.body!!.string())
+        val mangas = doc.select(latestUpdatesSelector()).map { latestUpdatesFromElement(it) }
+        val hasNextPage = doc.select(latestUpdatesNextPageSelector()).isNotEmpty()
+        return MangasPage(mangas, hasNextPage)
+    }
+
     // ✅ Search Manga
     override fun searchMangaRequest(page: Int, query: String, filters: FilterList): Request {
         return Request.Builder()
-            .url("$baseUrl/ajax/search?keyword=$query".toHttpUrl())
+            .url("$baseUrl/ajax/search?keyword=$query")
             .get()
             .build()
     }
@@ -53,7 +81,7 @@ class Prochan : ParsedHttpSource() {
             val urlAndText = element.select("div.ms-2 a")
             title = urlAndText.text()
             setUrlWithoutDomain(urlAndText.first()!!.absUrl("href"))
-            thumbnail_url = element.select("a img").first()?.absUrl("src")
+            thumbnail_url = element.select("a img").first()!!.absUrl("src")
         }
     }
 
@@ -68,7 +96,7 @@ class Prochan : ParsedHttpSource() {
                 description = document.select("div.review-content p").text()
             }
             genre = document.select("div.review-author-info a").joinToString { it.text() }
-            thumbnail_url = document.select("div.text-right img").first()?.absUrl("src")
+            thumbnail_url = document.select("div.text-right img").first()!!.absUrl("src")
             status = SManga.UNKNOWN
         }
     }
@@ -78,14 +106,16 @@ class Prochan : ParsedHttpSource() {
 
     override fun chapterFromElement(element: Element): SChapter {
         return SChapter.create().apply {
-            name = element.select("div.chapter-info div.chapter-title").text()
+            val chpNum = element.select("div.chapter-info div.chapter-number").text()
+            val chpTitle = element.select("div.chapter-info div.chapter-title").text()
+            name = if (chpNum.isBlank()) chpTitle else "$chpNum - $chpTitle"
             setUrlWithoutDomain(element.attr("href"))
         }
     }
 
     // ✅ Pages
     override fun pageListParse(document: Document): List<Page> {
-        return document.select("div.image_list img[src], div.image_list canvas[data-src]")
+        return document.select("div.image_list canvas[data-src], div.image_list img[src]")
             .mapIndexed { i, el ->
                 val url = if (el.hasAttr("src")) el.absUrl("src") else el.absUrl("data-src")
                 Page(i, "", url)
@@ -96,36 +126,9 @@ class Prochan : ParsedHttpSource() {
         throw UnsupportedOperationException()
     }
 
-    // ✅ Latest Updates
-    override fun latestUpdatesRequest(page: Int): Request {
-        return Request.Builder()
-            .url("$baseUrl/?page=$page".toHttpUrl())
-            .get()
-            .build()
-    }
-
-    override fun latestUpdatesSelector() = "div.last-chapter div.box"
-
-    override fun latestUpdatesFromElement(element: Element): SManga {
-        return SManga.create().apply {
-            val linkElement = element.select("div.info a")
-            title = linkElement.select("h3").text()
-            setUrlWithoutDomain(linkElement.first()!!.attr("href"))
-            thumbnail_url = element.select("div.imgu img").first()?.absUrl("src")
-        }
-    }
-
-    override fun latestUpdatesNextPageSelector() = "a[rel=next]"
-
-    override fun latestUpdatesParse(response: Response): MangasPage {
-        val doc = Jsoup.parse(response.body!!.string())
-        val mangas = doc.select(latestUpdatesSelector()).map { latestUpdatesFromElement(it) }
-        val hasNextPage = doc.select(latestUpdatesNextPageSelector()).isNotEmpty()
-        return MangasPage(mangas, hasNextPage)
-    }
-
-    // ✅ Chapter Page Parse (مطلوبة من ParsedHttpSource)
-    override fun chapterPageParse(document: Document): Page {
-        throw UnsupportedOperationException("Not used in this source")
+    // ✅ Chapter Page Parse (مطلوبة في بعض نسخ الـ API)
+    override fun chapterPageParse(document: Document): List<Page> {
+        // إذا لم يكن مطلوبًا استخراج الصفحات هنا، رجع قائمة فارغة
+        return emptyList()
     }
 }
