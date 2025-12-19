@@ -5,7 +5,6 @@ import eu.kanade.tachiyomi.source.online.ParsedHttpSource
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.HttpUrl.Companion.toHttpUrl
-import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 
@@ -19,7 +18,7 @@ class Prochan : ParsedHttpSource() {
     // ✅ Popular
     override fun popularMangaRequest(page: Int): Request {
         return Request.Builder()
-            .url("$baseUrl/series?page=$page".toHttpUrl())
+            .url("$baseUrl/popular?page=$page".toHttpUrl())
             .get()
             .build()
     }
@@ -39,7 +38,7 @@ class Prochan : ParsedHttpSource() {
     // ✅ Search
     override fun searchMangaRequest(page: Int, query: String, filters: FilterList): Request {
         return Request.Builder()
-            .url("$baseUrl/ajax/search?keyword=$query".toHttpUrl())
+            .url("$baseUrl/search?query=$query&page=$page".toHttpUrl())
             .get()
             .build()
     }
@@ -60,9 +59,9 @@ class Prochan : ParsedHttpSource() {
     // ✅ Details
     override fun mangaDetailsParse(document: Document): SManga {
         return SManga.create().apply {
-            title = document.select("div.author-info-title h1").text()
-            description = document.select("div.review-content").text()
-            thumbnail_url = document.select("div.text-right img").first()!!.absUrl("src")
+            title = document.select("h1.title").text()
+            description = document.select("div.description").text()
+            thumbnail_url = document.select("div.cover img").first()?.absUrl("src")
             status = SManga.UNKNOWN
         }
     }
@@ -86,5 +85,32 @@ class Prochan : ParsedHttpSource() {
 
     override fun imageUrlParse(document: Document): String {
         throw UnsupportedOperationException()
+    }
+
+    // ✅ Latest Updates (الدالة الناقصة)
+    override fun latestUpdatesRequest(page: Int): Request {
+        return Request.Builder()
+            .url("$baseUrl/latest?page=$page".toHttpUrl())
+            .get()
+            .build()
+    }
+
+    override fun latestUpdatesSelector() = "div.latest-updates div.manga-item"
+
+    override fun latestUpdatesFromElement(element: Element): SManga {
+        return SManga.create().apply {
+            title = element.select("a.title").text()
+            setUrlWithoutDomain(element.select("a").attr("href"))
+            thumbnail_url = element.select("img").attr("abs:src")
+        }
+    }
+
+    override fun latestUpdatesNextPageSelector() = "a[rel=next]"
+
+    override fun latestUpdatesParse(response: Response): MangasPage {
+        val doc = response.parseAs<Document>()
+        val mangas = doc.select(latestUpdatesSelector()).map { latestUpdatesFromElement(it) }
+        val hasNextPage = doc.select(latestUpdatesNextPageSelector()).isNotEmpty()
+        return MangasPage(mangas, hasNextPage)
     }
 }
