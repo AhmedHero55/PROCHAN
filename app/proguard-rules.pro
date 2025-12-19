@@ -1,11 +1,23 @@
-# احتفظ بميتا بيانات Kotlin لتجنب أخطاء R8 على الانعكاس والواجهات
--keep class kotlin.Metadata { *; }
--keep class kotlin.** { *; }
--keep class kotlinx.** { *; }
+# ✅ احتفظ بكلاس Prochan حتى لا يتم حذفه أو تشويهه
+-keep class ar.prochan.Prochan { *; }
 
-# احتفظ بواجهات Tachiyomi التي تُستدعى ديناميكياً عبر reflection (حسب ما تستخدمه)
--keep class eu.kanade.tachiyomi.** { *; }
+# ✅ احتفظ بجميع الكلاسات الخاصة بـ Tachiyomi Source API
+-keep class eu.kanade.tachiyomi.source.** { *; }
 
-# OkHttp/JSoup في العادة لا تحتاج قواعد خاصة، لكن تجنب حذف الصفوف العامة
--dontwarn org.jsoup.**
--dontwarn okhttp3.**
+# ✅ احتفظ بجميع الكلاسات الخاصة بـ Models (SManga, SChapter, Page)
+-keep class eu.kanade.tachiyomi.source.model.** { *; }
+
+# ✅ احتفظ بجميع الكلاسات الخاصة بـ ParsedHttpSource
+-keep class eu.kanade.tachiyomi.source.online.ParsedHttpSource { *; }
+
+# ✅ احتفظ بجميع الكلاسات الخاصة بـ okhttp و jsoup
+-keep class okhttp3.** { *; }
+-keep class org.jsoup.** { *; }
+
+# ✅ لا تحذف أي دوال أو حقول مشروطة بـ @Keep
+-keep @androidx.annotation.Keep class * { *; }
+
+# ✅ احتفظ بجميع الـ constructors العامة
+-keepclassmembers class * {
+    public <init>(...);
+}
