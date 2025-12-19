@@ -31,7 +31,7 @@ jobs:
         run: |
           sed -i '/android:roundIcon/d' PROCHAN/app/src/main/AndroidManifest.xml
 
-      # 4) بناء الـ APK
+      # 4) بناء الـ APK (الوحدة الفرعية app)
       - name: Build APK
         shell: bash
         run: |
