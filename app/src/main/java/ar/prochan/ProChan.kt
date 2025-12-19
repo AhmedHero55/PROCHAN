@@ -113,9 +113,9 @@ class Prochan : ParsedHttpSource() {
         }
     }
 
-    // ✅ Pages (للنسخ الحديثة من الـ API)
+    // ✅ Pages
     override fun pageListParse(document: Document): List<Page> {
-        return document.select("div.image_list canvas[data-src], div.image_list img[src]")
+        return document.select("div.image_list img[src], div.image_list canvas[data-src]")
             .mapIndexed { i, el ->
                 val url = if (el.hasAttr("src")) el.absUrl("src") else el.absUrl("data-src")
                 Page(i, "", url)
@@ -126,13 +126,14 @@ class Prochan : ParsedHttpSource() {
         throw UnsupportedOperationException()
     }
 
-    // ✅ Chapter Page Parse (للنسخ القديمة من الـ API)
-    // إذا مكتبتك تطلب هذه الدالة، أبقها. إذا لا، احذفها.
-    override fun chapterPageParse(document: Document): List<Page> {
-        return document.select("div.image_list img[src], div.image_list canvas[data-src]")
-            .mapIndexed { i, el ->
-                val url = if (el.hasAttr("src")) el.absUrl("src") else el.absUrl("data-src")
-                Page(i, "", url)
-            }
+    // ✅ Chapter Page Parse (في نسختك من الـ API يرجع Page واحد)
+    override fun chapterPageParse(document: Document): Page {
+        val img = document.select("div.image_list img[src], div.image_list canvas[data-src]").firstOrNull()
+        val url = when {
+            img == null -> ""
+            img.hasAttr("src") -> img.absUrl("src")
+            else -> img.absUrl("data-src")
+        }
+        return Page(0, "", url)
     }
 }
