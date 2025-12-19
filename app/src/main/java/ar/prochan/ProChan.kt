@@ -2,14 +2,17 @@ package ar.prochan
 
 import eu.kanade.tachiyomi.source.model.*
 import eu.kanade.tachiyomi.source.online.ParsedHttpSource
+import eu.kanade.tachiyomi.network.GET
 import okhttp3.Request
+import okhttp3.Response
+import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 
 class Prochan : ParsedHttpSource() {
 
     override val name = "ProChan"
-    override val baseUrl = "https://prochan.org"
+    override val baseUrl = "https://prochan.net"   // ✅ تحديث الرابط
     override val lang = "ar"
     override val supportsLatest = true
 
@@ -80,5 +83,20 @@ class Prochan : ParsedHttpSource() {
     // ✅ رابط الصورة
     override fun imageUrlParse(document: Document): String {
         return document.selectFirst("img.page-image")?.attr("src") ?: ""
+    }
+
+    // ✅ الدالة المطلوبة من الـ API
+    override fun chapterPageParse(response: Response): SChapter {
+        val document = response.asJsoup()
+        return SChapter.create().apply {
+            name = document.selectFirst("h1.chapter-title")?.text() ?: ""
+            url = response.request.url.toString()
+        }
+    }
+
+    // ✅ تحويل Response إلى Jsoup Document
+    private fun Response.asJsoup(): Document {
+        val bodyStr = this.body?.string() ?: ""
+        return Jsoup.parse(bodyStr)
     }
 }
