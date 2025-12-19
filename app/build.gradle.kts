@@ -15,18 +15,9 @@ android {
         versionName = "1.0"
     }
 
-    signingConfigs {
-        create("debug") {
-            storeFile = file("${System.getProperty("user.home")}/.android/debug.keystore")
-            storePassword = "android"
-            keyAlias = "androiddebugkey"
-            keyPassword = "android"
-        }
-    }
-
     buildTypes {
         release {
-            // ✅ استخدم توقيع debug حتى نسخة release تكون صالحة للتثبيت مباشرة
+            // ✅ استخدم SigningConfig debug الافتراضي
             signingConfig = signingConfigs.getByName("debug")
             isMinifyEnabled = false
             proguardFiles(
