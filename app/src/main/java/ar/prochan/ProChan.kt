@@ -113,7 +113,7 @@ class Prochan : ParsedHttpSource() {
         }
     }
 
-    // ✅ Pages
+    // ✅ Pages (للنسخ الحديثة من الـ API)
     override fun pageListParse(document: Document): List<Page> {
         return document.select("div.image_list canvas[data-src], div.image_list img[src]")
             .mapIndexed { i, el ->
@@ -126,9 +126,13 @@ class Prochan : ParsedHttpSource() {
         throw UnsupportedOperationException()
     }
 
-    // ✅ Chapter Page Parse (مطلوبة في بعض نسخ الـ API)
+    // ✅ Chapter Page Parse (للنسخ القديمة من الـ API)
+    // إذا مكتبتك تطلب هذه الدالة، أبقها. إذا لا، احذفها.
     override fun chapterPageParse(document: Document): List<Page> {
-        // إذا لم يكن مطلوبًا استخراج الصفحات هنا، رجع قائمة فارغة
-        return emptyList()
+        return document.select("div.image_list img[src], div.image_list canvas[data-src]")
+            .mapIndexed { i, el ->
+                val url = if (el.hasAttr("src")) el.absUrl("src") else el.absUrl("data-src")
+                Page(i, "", url)
+            }
     }
 }
