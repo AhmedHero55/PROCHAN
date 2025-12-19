@@ -10,7 +10,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      # متغيرات البيئة المطلوبة لمشروع Mihon/extensions
       CI: true
       CI_CHUNK_SIZE: 50
       CI_CHUNK_NUM: 1
@@ -30,7 +29,7 @@ jobs:
           repository: mihonapp/mihon
           path: mihon
 
-      # 3) إعداد JDK (متوافق مع AGP 8.5.x)
+      # 3) إعداد JDK
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -43,7 +42,7 @@ jobs:
         run: |
           set -euxo pipefail
           cd mihon
-          chmod +x gradlew   # ضمان صلاحيات التنفيذ
+          chmod +x gradlew
           ./gradlew :source-api:assembleRelease --no-daemon
           mkdir -p ../PROCHAN/app/libs
           rm -f ../PROCHAN/app/libs/source-api.aar
@@ -55,7 +54,7 @@ jobs:
         run: |
           set -euxo pipefail
           cd PROCHAN
-          chmod +x gradlew   # ضمان صلاحيات التنفيذ
+          chmod +x gradlew
           ./gradlew clean
           ./gradlew :app:assembleRelease --no-daemon
 
