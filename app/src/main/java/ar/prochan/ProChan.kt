@@ -43,7 +43,14 @@ class Prochan : ParsedHttpSource() {
 
     // ✅ Manga Details (كان ناقص)
     override fun mangaDetailsParse(response: Response): SManga {
-        return SManga.create()
+        val manga = SManga.create()
+        manga.title = "Placeholder Title"
+        manga.author = "Unknown"
+        manga.artist = "Unknown"
+        manga.status = SManga.UNKNOWN
+        manga.description = "No description available"
+        manga.thumbnail_url = "$baseUrl/placeholder.png"
+        return manga
     }
 
     // ✅ Chapter List
