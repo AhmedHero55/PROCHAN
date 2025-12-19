@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "ar.prochan"
-    compileSdk = 35   // ✅ تحديث إلى 35 لحل مشكلة androidx.core
+    compileSdk = 35   // ✅ تحديث إلى 35
 
     defaultConfig {
         applicationId = "ar.prochan"
@@ -33,7 +33,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-        isCoreLibraryDesugaringEnabled = true   // ✅ تفعيل desugaring
+        isCoreLibraryDesugaringEnabled = true   // ✅ ضروري
     }
 
     kotlin {
@@ -49,8 +49,8 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
 
-    // ✅ مكتبة desugaring المطلوبة
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.2")
+    // ✅ مكتبة desugaring المطلوبة (نسخة 2.1.5 أو أحدث)
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
 
     // ✅ مكتبة Tachiyomi Source API
     implementation(files("libs/source-api.aar"))
@@ -63,5 +63,4 @@ dependencies {
 
     // ✅ okhttp و jsoup
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    implementation("org.jsoup:jsoup:1.17.2")
-}
+    implementation
