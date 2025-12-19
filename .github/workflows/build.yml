@@ -22,7 +22,7 @@ jobs:
           repository: AhmedHero55/PROCHAN
           path: PROCHAN
 
-      # 2) جلب مشروع Mihon (المصدر الأساسي لـ source-api)
+      # 2) جلب مشروع Mihon
       - name: Checkout Mihon
         uses: actions/checkout@v4
         with:
@@ -36,7 +36,7 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      # 4) بناء مكتبة source-api من Mihon
+      # 4) بناء مكتبة source-api
       - name: Build source-api AAR
         shell: bash
         run: |
@@ -48,7 +48,12 @@ jobs:
           rm -f ../PROCHAN/app/libs/source-api.aar
           cp source-api/build/outputs/aar/source-api-release.aar ../PROCHAN/app/libs/source-api.aar
 
-      # 5) تنظيف وبناء APK لمشروعك PROCHAN
+      # 5) إصلاح الـ Manifest (إزالة roundIcon)
+      - name: Fix Manifest (remove roundIcon)
+        run: |
+          sed -i '/android:roundIcon/d' PROCHAN/app/src/main/AndroidManifest.xml
+
+      # 6) بناء APK
       - name: Build PROCHAN APK
         shell: bash
         run: |
@@ -58,7 +63,7 @@ jobs:
           ./gradlew clean
           ./gradlew :app:assembleRelease --no-daemon
 
-      # 6) رفع الـ artifacts (APK + AAR)
+      # 7) رفع الـ artifacts
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
