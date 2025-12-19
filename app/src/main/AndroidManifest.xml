@@ -8,15 +8,22 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
-        <!-- ✅ Activity رئيسية مع android:exported -->
-        <activity
-            android:name=".MainActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <!-- ✅ تعريف الإضافة لـ Tachiyomi -->
+        <meta-data
+            android:name="tachiyomi.extension.class"
+            android:value="ar.prochan.Prochan" />
+
+        <meta-data
+            android:name="tachiyomi.extension.name"
+            android:value="ProChan" />
+
+        <meta-data
+            android:name="tachiyomi.extension.pkg"
+            android:value="ar.prochan" />
+
+        <meta-data
+            android:name="tachiyomi.extension.version"
+            android:value="1.0" />
 
     </application>
 
