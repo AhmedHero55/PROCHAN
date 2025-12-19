@@ -24,10 +24,30 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Fix Manifest (remove roundIcon)
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('PROCHAN/**/*.gradle*', 'PROCHAN/**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Validate project files
+        run: |
+          set -euxo pipefail
+          test -f PROCHAN/app/build.gradle.kts
+          test -f PROCHAN/settings.gradle.kts
+          test -f PROCHAN/build.gradle.kts
+          test -f PROCHAN/gradle.properties
+          test -f PROCHAN/app/src/main/AndroidManifest.xml
+          test -f PROCHAN/app/src/main/java/ar/prochan/ProChan.kt
+
+      - name: Fix Manifest (remove roundIcon if exists)
         run: sed -i '/android:roundIcon/d' PROCHAN/app/src/main/AndroidManifest.xml
 
-      - name: Build APK
+      - name: Build APK (release)
         shell: bash
         run: |
           set -euxo pipefail
