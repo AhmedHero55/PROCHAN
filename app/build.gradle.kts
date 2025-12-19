@@ -42,7 +42,7 @@ android {
 }
 
 dependencies {
-    // ✅ إضافة مكتبة source-api التي وضعتها في app/libs
+    // ✅ مكتبة source-api التي وضعتها في app/libs
     implementation(files("libs/source-api.aar"))
 
     // ✅ مكتبة desugar المطلوبة (نسخة حديثة)
@@ -61,3 +61,10 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
     // Jsoup
+    implementation("org.jsoup:jsoup:1.16.1")
+
+    // اختبارات
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+}
