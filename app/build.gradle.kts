@@ -18,9 +18,9 @@ android {
 
     buildTypes {
         release {
-            // تعطيل الـ minify لحل نهائي وفوري لمشكلة R8 والمفقودات
+            // مؤقتًا لتعطيل R8 حتى نتأكد من الاعتمادات
             isMinifyEnabled = false
-            // لو أردت إعادة تفعيل لاحقًا بعد استقرار الاعتمادات، غيّر للسطرين أدناه:
+            // إذا أردت إعادة تفعيل لاحقًا:
             // isMinifyEnabled = true
             // proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
@@ -50,10 +50,12 @@ android {
         isCoreLibraryDesugaringEnabled = true
     }
 
-    kotlinOptions {
-        jvmTarget = "17"
-        // إبقاءه مفيد عند اختلاف metadata بين Kotlin والـ AAR
-        freeCompilerArgs += listOf("-Xskip-metadata-version-check")
+    // ✅ DSL الجديد لـ Kotlin compilerOptions
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+            freeCompilerArgs.add("-Xskip-metadata-version-check")
+        }
     }
 }
 
@@ -72,15 +74,10 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("org.jsoup:jsoup:1.16.1")
 
-    // الإضافات اللازمة بحسب أخطاء R8 (مفقودات)
-    // RxJava 1 (المطلوبة من HttpSource)
+    // ✅ المكتبات الناقصة التي سببت أخطاء R8
     implementation("io.reactivex:rxjava:1.3.8")
-
-    // kotlinx.serialization runtime (مطلوبة لـ Page serializer)
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.6.3")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
-
-    // Injekt (مطلوبة من ConfigurableSource)
     implementation("uy.kohesive.injekt:injekt-core:1.3.1")
 
     testImplementation("junit:junit:4.13.2")
