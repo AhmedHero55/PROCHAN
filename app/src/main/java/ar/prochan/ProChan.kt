@@ -3,7 +3,6 @@ package ar.prochan
 import eu.kanade.tachiyomi.source.model.*
 import eu.kanade.tachiyomi.source.online.ParsedHttpSource
 import okhttp3.Request
-import okhttp3.Response
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -67,15 +66,6 @@ class Prochan : ParsedHttpSource() {
         }
     }
 
-    // ✅ توقيع صحيح حسب الـ AAR
-    override fun chapterPageParse(response: Response): SChapter {
-        val document = response.asJsoupSafe()
-        return SChapter.create().apply {
-            name = document.selectFirst("h1.chapter-title")?.text() ?: ""
-            url = response.request.url.toString()
-        }
-    }
-
     override fun pageListParse(document: Document): List<Page> {
         return document.select("img.page-image").mapIndexed { index, element ->
             Page(index, "", element.attr("src"))
@@ -86,8 +76,7 @@ class Prochan : ParsedHttpSource() {
         return document.selectFirst("img.page-image")?.attr("src") ?: ""
     }
 
-    private fun Response.asJsoupSafe(): Document {
-        val bodyStr = this.body?.string() ?: ""
-        return Jsoup.parse(bodyStr)
+    private fun String.asJsoupSafe(): Document {
+        return Jsoup.parse(this)
     }
 }
