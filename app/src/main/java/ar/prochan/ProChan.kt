@@ -13,7 +13,7 @@ class Prochan : ParsedHttpSource() {
     override val lang = "ar"
     override val supportsLatest = true
 
-    // ✅ Popular Manga
+    // Popular
     override fun popularMangaRequest(page: Int): Request {
         val url = "$baseUrl/series/" + if (page > 1) "?page=$page" else ""
         return Request.Builder().url(url).get().build()
@@ -32,7 +32,7 @@ class Prochan : ParsedHttpSource() {
 
     override fun popularMangaNextPageSelector() = "a[rel=next]"
 
-    // ✅ Latest Updates
+    // Latest
     override fun latestUpdatesRequest(page: Int): Request {
         val url = baseUrl + if (page > 1) "?page=$page" else ""
         return Request.Builder().url(url).get().build()
@@ -51,7 +51,7 @@ class Prochan : ParsedHttpSource() {
 
     override fun latestUpdatesNextPageSelector() = popularMangaNextPageSelector()
 
-    // ✅ Search Manga
+    // Search
     override fun searchMangaRequest(page: Int, query: String, filters: FilterList): Request {
         val url = "$baseUrl/ajax/search?keyword=$query"
         return Request.Builder().url(url).get().build()
@@ -70,7 +70,7 @@ class Prochan : ParsedHttpSource() {
 
     override fun searchMangaNextPageSelector(): String? = null
 
-    // ✅ Manga Details
+    // Details
     override fun mangaDetailsParse(document: Document): SManga {
         return SManga.create().apply {
             title = document.select("div.author-info-title h1").text()
@@ -84,7 +84,7 @@ class Prochan : ParsedHttpSource() {
         }
     }
 
-    // ✅ Chapters
+    // Chapters
     override fun chapterListSelector() = "div.chapter-card a"
 
     override fun chapterFromElement(element: Element): SChapter {
@@ -96,7 +96,7 @@ class Prochan : ParsedHttpSource() {
         }
     }
 
-    // ✅ Pages (كل الصفحات)
+    // Pages
     override fun pageListParse(document: Document): List<Page> {
         return document.select("div.image_list canvas[data-src], div.image_list img[src]")
             .mapIndexed { i, el ->
@@ -107,16 +107,5 @@ class Prochan : ParsedHttpSource() {
 
     override fun imageUrlParse(document: Document): String {
         throw UnsupportedOperationException()
-    }
-
-    // ✅ Chapter Page Parse (صفحة واحدة فقط حسب الـ API)
-    override fun chapterPageParse(document: Document): Page {
-        val img = document.select("div.image_list img[src], div.image_list canvas[data-src]").firstOrNull()
-        val url = when {
-            img == null -> ""
-            img.hasAttr("src") -> img.absUrl("src")
-            else -> img.absUrl("data-src")
-        }
-        return Page(0, "", url)
     }
 }
