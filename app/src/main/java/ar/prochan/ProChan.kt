@@ -2,7 +2,6 @@ package ar.prochan
 
 import eu.kanade.tachiyomi.source.model.*
 import eu.kanade.tachiyomi.source.online.ParsedHttpSource
-import eu.kanade.tachiyomi.network.GET
 import okhttp3.Request
 import okhttp3.Response
 import org.jsoup.Jsoup
@@ -12,13 +11,13 @@ import org.jsoup.nodes.Element
 class Prochan : ParsedHttpSource() {
 
     override val name = "ProChan"
-    override val baseUrl = "https://prochan.net"   // ✅ تحديث الرابط
+    override val baseUrl = "https://prochan.net"   // ✅ الرابط الصحيح
     override val lang = "ar"
     override val supportsLatest = true
 
     // ✅ المانجا الأكثر شعبية
     override fun popularMangaRequest(page: Int): Request =
-        GET("$baseUrl/popular?page=$page")
+        Request.Builder().url("$baseUrl/popular?page=$page").build()
 
     override fun popularMangaSelector(): String = "div.manga-item"
     override fun popularMangaFromElement(element: Element): SManga = searchMangaFromElement(element)
@@ -26,7 +25,7 @@ class Prochan : ParsedHttpSource() {
 
     // ✅ آخر التحديثات
     override fun latestUpdatesRequest(page: Int): Request =
-        GET("$baseUrl/latest?page=$page")
+        Request.Builder().url("$baseUrl/latest?page=$page").build()
 
     override fun latestUpdatesSelector(): String = "div.manga-item"
     override fun latestUpdatesFromElement(element: Element): SManga = searchMangaFromElement(element)
@@ -39,7 +38,7 @@ class Prochan : ParsedHttpSource() {
         } else {
             "$baseUrl/search?q=${query.trim()}&page=$page"
         }
-        return GET(url)
+        return Request.Builder().url(url).build()
     }
 
     override fun searchMangaSelector(): String = "div.manga-item"
