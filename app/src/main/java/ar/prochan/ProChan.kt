@@ -1,10 +1,6 @@
 package ar.prochan
 
-import eu.kanade.tachiyomi.source.model.FilterList
-import eu.kanade.tachiyomi.source.model.MangasPage
-import eu.kanade.tachiyomi.source.model.SManga
-import eu.kanade.tachiyomi.source.model.SChapter
-import eu.kanade.tachiyomi.source.model.Page
+import eu.kanade.tachiyomi.source.model.*
 import eu.kanade.tachiyomi.source.online.ParsedHttpSource
 import okhttp3.Request
 import org.jsoup.nodes.Document
@@ -17,7 +13,7 @@ class Prochan : ParsedHttpSource() {
     override val lang = "ar"
     override val supportsLatest = true
 
-    // Popular
+    // ✅ Popular Manga
     override fun popularMangaRequest(page: Int): Request {
         val url = "$baseUrl/series/" + if (page > 1) "?page=$page" else ""
         return Request.Builder().url(url).get().build()
@@ -36,7 +32,7 @@ class Prochan : ParsedHttpSource() {
 
     override fun popularMangaNextPageSelector() = "a[rel=next]"
 
-    // Latest
+    // ✅ Latest Updates
     override fun latestUpdatesRequest(page: Int): Request {
         val url = baseUrl + if (page > 1) "?page=$page" else ""
         return Request.Builder().url(url).get().build()
@@ -55,7 +51,7 @@ class Prochan : ParsedHttpSource() {
 
     override fun latestUpdatesNextPageSelector() = popularMangaNextPageSelector()
 
-    // Search
+    // ✅ Search Manga
     override fun searchMangaRequest(page: Int, query: String, filters: FilterList): Request {
         val url = "$baseUrl/ajax/search?keyword=$query"
         return Request.Builder().url(url).get().build()
@@ -74,7 +70,7 @@ class Prochan : ParsedHttpSource() {
 
     override fun searchMangaNextPageSelector(): String? = null
 
-    // Details
+    // ✅ Manga Details
     override fun mangaDetailsParse(document: Document): SManga {
         return SManga.create().apply {
             title = document.select("div.author-info-title h1").text()
@@ -88,7 +84,7 @@ class Prochan : ParsedHttpSource() {
         }
     }
 
-    // Chapters
+    // ✅ Chapters
     override fun chapterListSelector() = "div.chapter-card a"
 
     override fun chapterFromElement(element: Element): SChapter {
@@ -100,7 +96,7 @@ class Prochan : ParsedHttpSource() {
         }
     }
 
-    // Pages (Document-based — مطلوبة حسب مكتبتك)
+    // ✅ Pages (كل الصفحات)
     override fun pageListParse(document: Document): List<Page> {
         return document.select("div.image_list canvas[data-src], div.image_list img[src]")
             .mapIndexed { i, el ->
@@ -110,7 +106,17 @@ class Prochan : ParsedHttpSource() {
     }
 
     override fun imageUrlParse(document: Document): String {
-        // ليس مستخدماً لأننا نعيد الصفحات مباشرة في pageListParse
         throw UnsupportedOperationException()
+    }
+
+    // ✅ Chapter Page Parse (صفحة واحدة فقط حسب الـ API)
+    override fun chapterPageParse(document: Document): Page {
+        val img = document.select("div.image_list img[src], div.image_list canvas[data-src]").firstOrNull()
+        val url = when {
+            img == null -> ""
+            img.hasAttr("src") -> img.absUrl("src")
+            else -> img.absUrl("data-src")
+        }
+        return Page(0, "", url)
     }
 }
