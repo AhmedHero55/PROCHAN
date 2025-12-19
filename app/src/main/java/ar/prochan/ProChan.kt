@@ -17,16 +17,14 @@ class Prochan : ParsedHttpSource() {
     override val lang = "ar"
     override val supportsLatest = true
 
-    // Requests (توقيعات مطابقة للـ AAR لديك)
-    override fun popularMangaRequest(page: Int): Request {
-        return Request.Builder().url("$baseUrl/popular?page=$page").build()
-    }
+    // ✅ طلبات الشبكة
+    override fun popularMangaRequest(page: Int): Request =
+        Request.Builder().url("$baseUrl/popular?page=$page").build()
 
-    override fun latestUpdatesRequest(page: Int): Request {
-        return Request.Builder().url("$baseUrl/latest?page=$page").build()
-    }
+    override fun latestUpdatesRequest(page: Int): Request =
+        Request.Builder().url("$baseUrl/latest?page=$page").build()
 
-    override fun searchMangaRequest(page: Int, query: String, filters: FilterList): Request {
+    override fun searchMangaRequest(page: Int, query: String): Request {
         val url = if (query.isBlank()) {
             "$baseUrl/search?page=$page"
         } else {
@@ -35,9 +33,8 @@ class Prochan : ParsedHttpSource() {
         return Request.Builder().url(url).build()
     }
 
-    // Search
+    // ✅ البحث
     override fun searchMangaSelector(): String = "div.manga-item"
-
     override fun searchMangaFromElement(element: Element): SManga {
         return SManga.create().apply {
             title = element.selectFirst("h3.title")?.text() ?: ""
@@ -45,20 +42,19 @@ class Prochan : ParsedHttpSource() {
             url = element.selectFirst("a")?.attr("href") ?: ""
         }
     }
-
     override fun searchMangaNextPageSelector(): String? = "a.next"
 
-    // Popular
+    // ✅ الشعبية
     override fun popularMangaSelector(): String = "div.manga-item"
     override fun popularMangaFromElement(element: Element): SManga = searchMangaFromElement(element)
     override fun popularMangaNextPageSelector(): String? = "a.next"
 
-    // Latest
+    // ✅ آخر التحديثات
     override fun latestUpdatesSelector(): String = "div.manga-item"
     override fun latestUpdatesFromElement(element: Element): SManga = searchMangaFromElement(element)
     override fun latestUpdatesNextPageSelector(): String? = "a.next"
 
-    // Details
+    // ✅ تفاصيل المانجا
     override fun mangaDetailsParse(document: Document): SManga {
         return SManga.create().apply {
             title = document.selectFirst("h1.title")?.text() ?: ""
@@ -70,9 +66,8 @@ class Prochan : ParsedHttpSource() {
         }
     }
 
-    // Chapter list
+    // ✅ قائمة الفصول
     override fun chapterListSelector(): String = "ul.chapters li"
-
     override fun chapterFromElement(element: Element): SChapter {
         return SChapter.create().apply {
             name = element.selectFirst("a")?.text() ?: ""
@@ -80,8 +75,7 @@ class Prochan : ParsedHttpSource() {
         }
     }
 
-    // REQUIRED BY YOUR AAR: chapterPageParse(Response): SChapter
-    // بعض نسخ الـ AAR تطلب هذه الدالة لتجهيز بيانات الفصل من صفحة الفصل نفسها.
+    // ✅ الدالة المطلوبة من الـ AAR
     override fun chapterPageParse(response: Response): SChapter {
         val document = response.asJsoupSafe()
         return SChapter.create().apply {
@@ -90,11 +84,10 @@ class Prochan : ParsedHttpSource() {
         }
     }
 
-    // Pages
+    // ✅ الصفحات
     override fun pageListParse(document: Document): List<Page> {
         return document.select("img.page-image").mapIndexed { index, element ->
-            val imageUrl = element.attr("src")
-            Page(index, "", imageUrl)
+            Page(index, "", element.attr("src"))
         }
     }
 
@@ -102,7 +95,7 @@ class Prochan : ParsedHttpSource() {
         return document.selectFirst("img.page-image")?.attr("src") ?: ""
     }
 
-    // Helper: لا تعتمد على امتداد خارجي
+    // ✅ أداة مساعدة
     private fun Response.asJsoupSafe(): Document {
         val bodyStr = this.body?.string() ?: ""
         return Jsoup.parse(bodyStr)
