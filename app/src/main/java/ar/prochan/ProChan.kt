@@ -41,7 +41,7 @@ class Prochan : ParsedHttpSource() {
         return MangasPage(emptyList(), false)
     }
 
-    // ✅ Manga Details (كان ناقص)
+    // ✅ Manga Details (كان ناقص ويسبب الخطأ)
     override fun mangaDetailsParse(response: Response): SManga {
         val manga = SManga.create()
         manga.title = "Placeholder Title"
