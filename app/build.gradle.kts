@@ -18,21 +18,19 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            // تعطيل الـ minify لحل نهائي وفوري لمشكلة R8 والمفقودات
+            isMinifyEnabled = false
+            // لو أردت إعادة تفعيل لاحقًا بعد استقرار الاعتمادات، غيّر للسطرين أدناه:
+            // isMinifyEnabled = true
+            // proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
         debug {
             isMinifyEnabled = false
         }
     }
 
-    // تفادي تعارضات موارد محتملة من AAR (اختياري لكنه مفيد)
     packaging {
         resources {
-            // استبعاد ميتا إنف مصادر متعارضة إن ظهرت
             excludes += listOf(
                 "META-INF/DEPENDENCIES",
                 "META-INF/LICENSE",
@@ -54,13 +52,13 @@ android {
 
     kotlinOptions {
         jvmTarget = "17"
-        // إبقاءه يساعدنا مع AAR قديم لتجنب أخطاء metadata
+        // إبقاءه مفيد عند اختلاف metadata بين Kotlin والـ AAR
         freeCompilerArgs += listOf("-Xskip-metadata-version-check")
     }
 }
 
 dependencies {
-    // AAR الخاص بـ Tachiyomi Source API
+    // Tachiyomi Source API AAR
     implementation(files("libs/source-api.aar"))
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
@@ -73,6 +71,17 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("org.jsoup:jsoup:1.16.1")
+
+    // الإضافات اللازمة بحسب أخطاء R8 (مفقودات)
+    // RxJava 1 (المطلوبة من HttpSource)
+    implementation("io.reactivex:rxjava:1.3.8")
+
+    // kotlinx.serialization runtime (مطلوبة لـ Page serializer)
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.6.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+
+    // Injekt (مطلوبة من ConfigurableSource)
+    implementation("uy.kohesive.injekt:injekt-core:1.3.1")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
