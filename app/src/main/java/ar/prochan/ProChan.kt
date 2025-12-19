@@ -18,7 +18,7 @@ class Prochan : ParsedHttpSource() {
     override val lang = "ar"
     override val supportsLatest = true
 
-    // ✅ طلبات الشبكة
+    // Requests
     override fun popularMangaRequest(page: Int): Request =
         Request.Builder().url("$baseUrl/popular?page=$page").build()
 
@@ -34,8 +34,9 @@ class Prochan : ParsedHttpSource() {
         return Request.Builder().url(url).build()
     }
 
-    // ✅ البحث
+    // Search
     override fun searchMangaSelector(): String = "div.manga-item"
+
     override fun searchMangaFromElement(element: Element): SManga {
         return SManga.create().apply {
             title = element.selectFirst("h3.title")?.text() ?: ""
@@ -43,19 +44,20 @@ class Prochan : ParsedHttpSource() {
             url = element.selectFirst("a")?.attr("href") ?: ""
         }
     }
+
     override fun searchMangaNextPageSelector(): String? = "a.next"
 
-    // ✅ الشعبية
+    // Popular
     override fun popularMangaSelector(): String = "div.manga-item"
     override fun popularMangaFromElement(element: Element): SManga = searchMangaFromElement(element)
     override fun popularMangaNextPageSelector(): String? = "a.next"
 
-    // ✅ آخر التحديثات
+    // Latest
     override fun latestUpdatesSelector(): String = "div.manga-item"
     override fun latestUpdatesFromElement(element: Element): SManga = searchMangaFromElement(element)
     override fun latestUpdatesNextPageSelector(): String? = "a.next"
 
-    // ✅ تفاصيل المانجا
+    // Details
     override fun mangaDetailsParse(document: Document): SManga {
         return SManga.create().apply {
             title = document.selectFirst("h1.title")?.text() ?: ""
@@ -67,8 +69,9 @@ class Prochan : ParsedHttpSource() {
         }
     }
 
-    // ✅ قائمة الفصول
+    // Chapters
     override fun chapterListSelector(): String = "ul.chapters li"
+
     override fun chapterFromElement(element: Element): SChapter {
         return SChapter.create().apply {
             name = element.selectFirst("a")?.text() ?: ""
@@ -76,7 +79,7 @@ class Prochan : ParsedHttpSource() {
         }
     }
 
-    // ✅ الدالة المطلوبة من الـ AAR
+    // Required by your AAR
     override fun chapterPageParse(response: Response): SChapter {
         val document = response.asJsoupSafe()
         return SChapter.create().apply {
@@ -85,7 +88,7 @@ class Prochan : ParsedHttpSource() {
         }
     }
 
-    // ✅ الصفحات
+    // Pages
     override fun pageListParse(document: Document): List<Page> {
         return document.select("img.page-image").mapIndexed { index, element ->
             Page(index, "", element.attr("src"))
@@ -96,7 +99,7 @@ class Prochan : ParsedHttpSource() {
         return document.selectFirst("img.page-image")?.attr("src") ?: ""
     }
 
-    // ✅ أداة مساعدة
+    // Helper
     private fun Response.asJsoupSafe(): Document {
         val bodyStr = this.body?.string() ?: ""
         return Jsoup.parse(bodyStr)
