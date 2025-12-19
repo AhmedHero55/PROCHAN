@@ -2,110 +2,76 @@ package ar.prochan
 
 import eu.kanade.tachiyomi.source.model.*
 import eu.kanade.tachiyomi.source.online.ParsedHttpSource
-import okhttp3.Request
+import okhttp3.Response
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 
 class Prochan : ParsedHttpSource() {
 
-    override val name = "Prochan"
-    override val baseUrl = "https://prochan.net"
+    override val name = "ProChan"
+    override val baseUrl = "https://prochan.org"
     override val lang = "ar"
     override val supportsLatest = true
 
-    // Popular
-    override fun popularMangaRequest(page: Int): Request {
-        val url = "$baseUrl/series/" + if (page > 1) "?page=$page" else ""
-        return Request.Builder().url(url).get().build()
-    }
-
-    override fun popularMangaSelector() = "div.listupd div.bsx"
-
-    override fun popularMangaFromElement(element: Element): SManga {
-        return SManga.create().apply {
-            title = element.select("a").attr("title")
-            setUrlWithoutDomain(element.selectFirst("a")!!.attr("href"))
-            val img = element.selectFirst("img")!!
-            thumbnail_url = if (img.hasAttr("data-src")) img.attr("abs:data-src") else img.attr("abs:src")
-        }
-    }
-
-    override fun popularMangaNextPageSelector() = "a[rel=next]"
-
-    // Latest
-    override fun latestUpdatesRequest(page: Int): Request {
-        val url = baseUrl + if (page > 1) "?page=$page" else ""
-        return Request.Builder().url(url).get().build()
-    }
-
-    override fun latestUpdatesSelector() = "div.last-chapter div.box"
-
-    override fun latestUpdatesFromElement(element: Element): SManga {
-        return SManga.create().apply {
-            val link = element.selectFirst("div.info a")!!
-            title = link.selectFirst("h3")!!.text()
-            setUrlWithoutDomain(link.attr("href"))
-            thumbnail_url = element.selectFirst("div.imgu img")!!.absUrl("src")
-        }
-    }
-
-    override fun latestUpdatesNextPageSelector() = popularMangaNextPageSelector()
-
-    // Search
-    override fun searchMangaRequest(page: Int, query: String, filters: FilterList): Request {
-        val url = "$baseUrl/ajax/search?keyword=$query"
-        return Request.Builder().url(url).get().build()
-    }
-
-    override fun searchMangaSelector() = "li.list-group-item"
-
+    // ✅ البحث
+    override fun searchMangaSelector(): String = "div.manga-item"
     override fun searchMangaFromElement(element: Element): SManga {
         return SManga.create().apply {
-            val a = element.selectFirst("div.ms-2 a")!!
-            title = a.text()
-            setUrlWithoutDomain(a.absUrl("href"))
-            thumbnail_url = element.selectFirst("a img")!!.absUrl("src")
+            title = element.select("h3.title").text()
+            thumbnail_url = element.select("img").attr("src")
+            url = element.select("a").attr("href")
         }
     }
+    override fun searchMangaNextPageSelector(): String? = "a.next"
 
-    override fun searchMangaNextPageSelector(): String? = null
+    // ✅ قائمة المانجا
+    override fun popularMangaSelector(): String = "div.manga-item"
+    override fun popularMangaFromElement(element: Element): SManga = searchMangaFromElement(element)
+    override fun popularMangaNextPageSelector(): String? = "a.next"
 
-    // Details
+    // ✅ أحدث المانجا
+    override fun latestUpdatesSelector(): String = "div.manga-item"
+    override fun latestUpdatesFromElement(element: Element): SManga = searchMangaFromElement(element)
+    override fun latestUpdatesNextPageSelector(): String? = "a.next"
+
+    // ✅ تفاصيل المانجا
     override fun mangaDetailsParse(document: Document): SManga {
         return SManga.create().apply {
-            title = document.select("div.author-info-title h1").text()
-            description = document.select("div.review-content").let { el ->
-                val txt = el.text()
-                if (txt.isNullOrBlank()) document.select("div.review-content p").text() else txt
-            }
-            genre = document.select("div.review-author-info a").joinToString { it.text() }
-            thumbnail_url = document.selectFirst("div.text-right img")!!.absUrl("src")
-            status = SManga.UNKNOWN
+            title = document.select("h1.title").text()
+            author = document.select("span.author").text()
+            artist = document.select("span.artist").text()
+            genre = document.select("div.genres a").joinToString { it.text() }
+            description = document.select("div.description").text()
+            thumbnail_url = document.select("img.cover").attr("src")
         }
     }
 
-    // Chapters
-    override fun chapterListSelector() = "div.chapter-card a"
-
+    // ✅ الفصول
+    override fun chapterListSelector(): String = "ul.chapters li"
     override fun chapterFromElement(element: Element): SChapter {
-        val num = element.select("div.chapter-info div.chapter-number").text()
-        val title = element.select("div.chapter-info div.chapter-title").text()
         return SChapter.create().apply {
-            name = if (num.isBlank()) title else "$num - $title"
-            setUrlWithoutDomain(element.attr("href"))
+            name = element.select("a").text()
+            url = element.select("a").attr("href")
         }
     }
 
-    // Pages
-    override fun pageListParse(document: Document): List<Page> {
-        return document.select("div.image_list canvas[data-src], div.image_list img[src]")
-            .mapIndexed { i, el ->
-                val url = if (el.hasAttr("src")) el.absUrl("src") else el.absUrl("data-src")
-                Page(i, "", url)
-            }
+    // ✅ الصفحات داخل الفصل (حل مشكلة عدم وجود الدالة)
+    override fun chapterPageParse(response: Response): List<Page> {
+        val document = response.asJsoup()
+        return document.select("img.page-image").mapIndexed { index, element ->
+            Page(index, "", element.attr("src"))
+        }
     }
 
+    // ✅ قائمة الصفحات (متوافقة مع أي تغيير في chapterPageParse)
+    override fun pageListParse(document: Document): List<Page> {
+        return document.select("img.page-image").mapIndexed { index, element ->
+            Page(index, "", element.attr("src"))
+        }
+    }
+
+    // ✅ رابط الصورة
     override fun imageUrlParse(document: Document): String {
-        throw UnsupportedOperationException()
+        return document.select("img.page-image").attr("src")
     }
 }
