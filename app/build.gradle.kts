@@ -41,11 +41,6 @@ android {
     }
 }
 
-repositories {
-    google()
-    mavenCentral()
-}
-
 dependencies {
     implementation(files("libs/source-api.aar"))
 
