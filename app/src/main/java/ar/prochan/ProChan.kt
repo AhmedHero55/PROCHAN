@@ -5,20 +5,21 @@ import eu.kanade.tachiyomi.source.online.ParsedHttpSource
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.HttpUrl.Companion.toHttpUrl
+import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 
 class Prochan : ParsedHttpSource() {
 
     override val name = "Prochan"
-    override val baseUrl = "https://prochan.example"
+    override val baseUrl = "https://prochan.net"
     override val lang = "ar"
     override val supportsLatest = true
 
-    // ✅ Popular
+    // ✅ Popular Manga
     override fun popularMangaRequest(page: Int): Request {
         return Request.Builder()
-            .url("$baseUrl/popular?page=$page".toHttpUrl())
+            .url("$baseUrl/series?page=$page".toHttpUrl())
             .get()
             .build()
     }
@@ -29,16 +30,18 @@ class Prochan : ParsedHttpSource() {
         return SManga.create().apply {
             title = element.select("a").attr("title")
             setUrlWithoutDomain(element.select("a").first()!!.attr("href"))
-            thumbnail_url = element.select("img").attr("abs:src")
+            thumbnail_url = element.select("img").let {
+                if (it.hasAttr("data-src")) it.attr("abs:data-src") else it.attr("abs:src")
+            }
         }
     }
 
     override fun popularMangaNextPageSelector() = "a[rel=next]"
 
-    // ✅ Search
+    // ✅ Search Manga
     override fun searchMangaRequest(page: Int, query: String, filters: FilterList): Request {
         return Request.Builder()
-            .url("$baseUrl/search?query=$query&page=$page".toHttpUrl())
+            .url("$baseUrl/ajax/search?keyword=$query".toHttpUrl())
             .get()
             .build()
     }
@@ -50,18 +53,22 @@ class Prochan : ParsedHttpSource() {
             val urlAndText = element.select("div.ms-2 a")
             title = urlAndText.text()
             setUrlWithoutDomain(urlAndText.first()!!.absUrl("href"))
-            thumbnail_url = element.select("a img").first()!!.absUrl("src")
+            thumbnail_url = element.select("a img").first()?.absUrl("src")
         }
     }
 
     override fun searchMangaNextPageSelector(): String? = null
 
-    // ✅ Details
+    // ✅ Manga Details
     override fun mangaDetailsParse(document: Document): SManga {
         return SManga.create().apply {
-            title = document.select("h1.title").text()
-            description = document.select("div.description").text()
-            thumbnail_url = document.select("div.cover img").first()?.absUrl("src")
+            title = document.select("div.author-info-title h1").text()
+            description = document.select("div.review-content").text()
+            if (description.isNullOrBlank()) {
+                description = document.select("div.review-content p").text()
+            }
+            genre = document.select("div.review-author-info a").joinToString { it.text() }
+            thumbnail_url = document.select("div.text-right img").first()?.absUrl("src")
             status = SManga.UNKNOWN
         }
     }
@@ -71,46 +78,54 @@ class Prochan : ParsedHttpSource() {
 
     override fun chapterFromElement(element: Element): SChapter {
         return SChapter.create().apply {
-            name = element.text()
+            name = element.select("div.chapter-info div.chapter-title").text()
             setUrlWithoutDomain(element.attr("href"))
         }
     }
 
     // ✅ Pages
     override fun pageListParse(document: Document): List<Page> {
-        return document.select("div.image_list img[src]").mapIndexed { i, el ->
-            Page(i, "", el.absUrl("src"))
-        }
+        return document.select("div.image_list img[src], div.image_list canvas[data-src]")
+            .mapIndexed { i, el ->
+                val url = if (el.hasAttr("src")) el.absUrl("src") else el.absUrl("data-src")
+                Page(i, "", url)
+            }
     }
 
     override fun imageUrlParse(document: Document): String {
         throw UnsupportedOperationException()
     }
 
-    // ✅ Latest Updates (الدالة الناقصة)
+    // ✅ Latest Updates
     override fun latestUpdatesRequest(page: Int): Request {
         return Request.Builder()
-            .url("$baseUrl/latest?page=$page".toHttpUrl())
+            .url("$baseUrl/?page=$page".toHttpUrl())
             .get()
             .build()
     }
 
-    override fun latestUpdatesSelector() = "div.latest-updates div.manga-item"
+    override fun latestUpdatesSelector() = "div.last-chapter div.box"
 
     override fun latestUpdatesFromElement(element: Element): SManga {
         return SManga.create().apply {
-            title = element.select("a.title").text()
-            setUrlWithoutDomain(element.select("a").attr("href"))
-            thumbnail_url = element.select("img").attr("abs:src")
+            val linkElement = element.select("div.info a")
+            title = linkElement.select("h3").text()
+            setUrlWithoutDomain(linkElement.first()!!.attr("href"))
+            thumbnail_url = element.select("div.imgu img").first()?.absUrl("src")
         }
     }
 
     override fun latestUpdatesNextPageSelector() = "a[rel=next]"
 
     override fun latestUpdatesParse(response: Response): MangasPage {
-        val doc = response.parseAs<Document>()
+        val doc = Jsoup.parse(response.body!!.string())
         val mangas = doc.select(latestUpdatesSelector()).map { latestUpdatesFromElement(it) }
         val hasNextPage = doc.select(latestUpdatesNextPageSelector()).isNotEmpty()
         return MangasPage(mangas, hasNextPage)
+    }
+
+    // ✅ Chapter Page Parse (مطلوبة من ParsedHttpSource)
+    override fun chapterPageParse(document: Document): Page {
+        throw UnsupportedOperationException("Not used in this source")
     }
 }
