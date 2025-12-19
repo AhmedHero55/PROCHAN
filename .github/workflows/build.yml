@@ -1,42 +1,66 @@
-name: Build PROCHAN APK
+package ar.prochan
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-  workflow_dispatch:
+import eu.kanade.tachiyomi.source.model.FilterList
+import eu.kanade.tachiyomi.source.model.MangasPage
+import eu.kanade.tachiyomi.source.model.SManga
+import eu.kanade.tachiyomi.source.model.SChapter
+import eu.kanade.tachiyomi.source.model.Page
+import eu.kanade.tachiyomi.source.online.ParsedHttpSource
+import okhttp3.Request
+import okhttp3.Response
 
-jobs:
-  build-apk:
-    runs-on: ubuntu-latest
+class Prochan : ParsedHttpSource() {
 
-    steps:
-      - name: Checkout PROCHAN
-        uses: actions/checkout@v4
-        with:
-          repository: AhmedHero55/PROCHAN
-          path: PROCHAN
+    override val name = "Prochan"
+    override val baseUrl = "https://prochan.example"
+    override val lang = "en"
+    override val supportsLatest = true
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 17
+    // ✅ Popular Manga
+    override fun popularMangaRequest(page: Int): Request {
+        return GET("$baseUrl/popular?page=$page")
+    }
 
-      - name: Fix Manifest (remove roundIcon)
-        run: sed -i '/android:roundIcon/d' PROCHAN/app/src/main/AndroidManifest.xml
+    override fun popularMangaParse(response: Response): MangasPage {
+        // TODO: parse popular manga list
+        return MangasPage(emptyList(), false)
+    }
 
-      - name: Build APK
-        shell: bash
-        run: |
-          set -euxo pipefail
-          cd PROCHAN
-          chmod +x gradlew
-          ./gradlew :app:clean :app:assembleRelease --no-daemon
+    // ✅ Search Manga
+    override fun searchMangaRequest(page: Int, query: String, filters: FilterList): Request {
+        return GET("$baseUrl/search?query=$query&page=$page")
+    }
 
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: PROCHAN-apk
-          path: PROCHAN/app/build/outputs/apk/release/*.apk
+    override fun searchMangaParse(response: Response): MangasPage {
+        // TODO: parse search results
+        return MangasPage(emptyList(), false)
+    }
+
+    // ✅ Manga Details
+    override fun mangaDetailsParse(response: Response): SManga {
+        // TODO: parse manga details
+        return SManga.create()
+    }
+
+    // ✅ Chapter List
+    override fun chapterListParse(response: Response): List<SChapter> {
+        // TODO: parse chapters
+        return emptyList()
+    }
+
+    // ✅ Page List
+    override fun pageListParse(response: Response): List<Page> {
+        // TODO: parse pages
+        return emptyList()
+    }
+
+    // ✅ Latest Updates
+    override fun latestUpdatesRequest(page: Int): Request {
+        return GET("$baseUrl/latest?page=$page")
+    }
+
+    override fun latestUpdatesParse(response: Response): MangasPage {
+        // TODO: parse latest updates
+        return MangasPage(emptyList(), false)
+    }
+}
