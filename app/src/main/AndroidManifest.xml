@@ -8,7 +8,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
-        <!-- ✅ تعريف الإضافة لـ Tachiyomi -->
         <meta-data
             android:name="tachiyomi.extension.class"
             android:value="eu.kanade.tachiyomi.extension.prochan.Prochan" />
