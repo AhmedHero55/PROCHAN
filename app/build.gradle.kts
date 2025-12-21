@@ -4,7 +4,6 @@ plugins {
 }
 
 android {
-    // ✅ تعديل namespace و applicationId لتوافق مع معايير Tachiyomi
     namespace = "eu.kanade.tachiyomi.extension.prochan"
     compileSdk = 35
 
@@ -45,13 +44,14 @@ android {
 }
 
 dependencies {
+    // ✅ إضافة مكتبة Tachiyomi Source API
+    implementation(files("libs/source-api.app"))
+
     implementation("androidx.core:core-ktx:1.15.0")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
-
-    implementation(files("libs/source-api.aar"))
 
     implementation("io.reactivex:rxjava:1.3.8")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.6.3")
