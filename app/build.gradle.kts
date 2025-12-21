@@ -4,11 +4,12 @@ plugins {
 }
 
 android {
-    namespace = "ar.prochan"
+    // ✅ تعديل namespace و applicationId لتوافق مع معايير Tachiyomi
+    namespace = "eu.kanade.tachiyomi.extension.prochan"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "ar.prochan"
+        applicationId = "eu.kanade.tachiyomi.extension.prochan"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
