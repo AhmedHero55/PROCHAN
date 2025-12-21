@@ -11,7 +11,7 @@
         <!-- ✅ تعريف الإضافة لـ Tachiyomi -->
         <meta-data
             android:name="tachiyomi.extension.class"
-            android:value="ar.prochan.Prochan" />
+            android:value="eu.kanade.tachiyomi.extension.prochan.Prochan" />
 
         <meta-data
             android:name="tachiyomi.extension.name"
@@ -19,7 +19,7 @@
 
         <meta-data
             android:name="tachiyomi.extension.pkg"
-            android:value="ar.prochan" />
+            android:value="eu.kanade.tachiyomi.extension.prochan" />
 
         <meta-data
             android:name="tachiyomi.extension.version"
