@@ -76,6 +76,14 @@ class Prochan : ParsedHttpSource() {
         return document.selectFirst("img.page-image")?.attr("src") ?: ""
     }
 
+    // ✅ الدالة الناقصة التي يطلبها ParsedHttpSource
+    override fun chapterPageParse(response: Response): SChapter {
+        return SChapter.create().apply {
+            name = "Chapter"
+            url = response.request.url.toString()
+        }
+    }
+
     private fun Response.asJsoup(): Document {
         val bodyStr = this.body?.string() ?: ""
         return Jsoup.parse(bodyStr)
