@@ -44,8 +44,8 @@ android {
 }
 
 dependencies {
-    // ✅ إضافة مكتبة Tachiyomi Source API
-    implementation(files("libs/source-api.app"))
+    // ✅ إضافة مكتبة Tachiyomi Source API بصيغة AAR
+    implementation(files("libs/source-api.aar"))
 
     implementation("androidx.core:core-ktx:1.15.0")
     implementation("androidx.appcompat:appcompat:1.7.0")
