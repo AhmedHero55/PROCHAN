@@ -12,7 +12,6 @@ class Prochan : ParsedHttpSource() {
     override val lang = "ar"
     override val supportsLatest = true
 
-    // ✅ Popular Manga
     override fun popularMangaRequest(page: Int): Request =
         Request.Builder().url("$baseUrl/popular?page=$page").build()
 
@@ -20,7 +19,6 @@ class Prochan : ParsedHttpSource() {
     override fun popularMangaFromElement(element: Element): SManga = searchMangaFromElement(element)
     override fun popularMangaNextPageSelector(): String? = "a.next"
 
-    // ✅ Latest Updates
     override fun latestUpdatesRequest(page: Int): Request =
         Request.Builder().url("$baseUrl/latest?page=$page").build()
 
@@ -28,7 +26,6 @@ class Prochan : ParsedHttpSource() {
     override fun latestUpdatesFromElement(element: Element): SManga = searchMangaFromElement(element)
     override fun latestUpdatesNextPageSelector(): String? = "a.next"
 
-    // ✅ Search
     override fun searchMangaRequest(page: Int, query: String, filters: FilterList): Request {
         val url = if (query.isBlank()) {
             "$baseUrl/search?page=$page"
@@ -43,14 +40,12 @@ class Prochan : ParsedHttpSource() {
         return SManga.create().apply {
             title = element.selectFirst("h3.title")?.text().orEmpty()
             thumbnail_url = element.selectFirst("img")?.absUrl("src")
-            url = element.selectFirst("a")?.attr("href")?.let { href ->
-                if (href.startsWith("http")) href.removePrefix(baseUrl) else href
-            }.orEmpty()
+            // ✅ الرابط نسبي
+            url = element.selectFirst("a")?.attr("href").orEmpty()
         }
     }
     override fun searchMangaNextPageSelector(): String? = "a.next"
 
-    // ✅ Manga Details
     override fun mangaDetailsParse(document: Document): SManga {
         return SManga.create().apply {
             title = document.selectFirst("h1.title")?.text().orEmpty()
@@ -62,20 +57,18 @@ class Prochan : ParsedHttpSource() {
         }
     }
 
-    // ✅ Chapters
     override fun chapterListSelector(): String = "ul.chapters li"
     override fun chapterFromElement(element: Element): SChapter {
         return SChapter.create().apply {
             name = element.selectFirst("a")?.text().orEmpty()
-            url = element.selectFirst("a")?.attr("href")?.let { href ->
-                if (href.startsWith("http")) href.removePrefix(baseUrl) else href
-            }.orEmpty()
+            // ✅ الرابط نسبي
+            url = element.selectFirst("a")?.attr("href").orEmpty()
         }
     }
 
-    // ✅ Pages
     override fun pageListParse(document: Document): List<Page> {
         return document.select("img.page-image").mapIndexed { index, element ->
+            // ✅ الصور مطلقة
             Page(index, "", element.absUrl("src"))
         }
     }
