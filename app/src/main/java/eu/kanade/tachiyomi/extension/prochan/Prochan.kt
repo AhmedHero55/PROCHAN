@@ -3,6 +3,7 @@ package eu.kanade.tachiyomi.extension.prochan
 import eu.kanade.tachiyomi.source.model.*
 import eu.kanade.tachiyomi.source.online.ParsedHttpSource
 import okhttp3.Request
+import okhttp3.Response
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 
@@ -40,7 +41,6 @@ class Prochan : ParsedHttpSource() {
         return SManga.create().apply {
             title = element.selectFirst("h3.title")?.text().orEmpty()
             thumbnail_url = element.selectFirst("img")?.absUrl("src")
-            // ✅ الرابط نسبي
             url = element.selectFirst("a")?.attr("href").orEmpty()
         }
     }
@@ -61,19 +61,25 @@ class Prochan : ParsedHttpSource() {
     override fun chapterFromElement(element: Element): SChapter {
         return SChapter.create().apply {
             name = element.selectFirst("a")?.text().orEmpty()
-            // ✅ الرابط نسبي
             url = element.selectFirst("a")?.attr("href").orEmpty()
         }
     }
 
     override fun pageListParse(document: Document): List<Page> {
         return document.select("img.page-image").mapIndexed { index, element ->
-            // ✅ الصور مطلقة
             Page(index, "", element.absUrl("src"))
         }
     }
 
     override fun imageUrlParse(document: Document): String {
         return document.selectFirst("img.page-image")?.absUrl("src").orEmpty()
+    }
+
+    // ✅ الدالة المطلوبة من ParsedHttpSource
+    override fun chapterPageParse(response: Response): SChapter {
+        return SChapter.create().apply {
+            name = "Chapter"
+            url = response.request.url.toString()
+        }
     }
 }
