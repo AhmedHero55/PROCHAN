@@ -10,22 +10,27 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
+        <!-- الكلاس الرئيسي للإضافة -->
         <meta-data
             android:name="tachiyomi.extension.class"
             android:value="eu.kanade.tachiyomi.extension.prochan.Prochan" />
 
+        <!-- اسم الإضافة كما يظهر في Tachiyomi -->
         <meta-data
             android:name="tachiyomi.extension.name"
             android:value="ProChan" />
 
+        <!-- الباكيج الخاص بالإضافة -->
         <meta-data
             android:name="tachiyomi.extension.pkg"
             android:value="eu.kanade.tachiyomi.extension.prochan" />
 
+        <!-- رقم الإصدار -->
         <meta-data
             android:name="tachiyomi.extension.version"
             android:value="1.0" />
 
+        <!-- اللغة الخاصة بالإضافة -->
         <meta-data
             android:name="tachiyomi.extension.lang"
             android:value="ar" />
