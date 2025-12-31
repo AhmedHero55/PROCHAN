@@ -1,61 +1,65 @@
 name: Build PROCHAN APK
+
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    paths:
+      - "app/**"
+      - "build.gradle.kts"
+      - "settings.gradle.kts"
+      - "gradle.properties"
   workflow_dispatch:
 
 jobs:
   build-apk:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout PROCHAN
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Cache Gradle
+      - name: Android SDK cache
         uses: actions/cache@v4
         with:
           path: |
+            ~/.android
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+          key: Linux-android
 
-      - name: Cache Android
-        uses: actions/cache@v4
-        with:
-          path: ~/.android
-          key: ${{ runner.os }}-android
-
-      - name: Fix Manifest (remove roundIcon if exists)
-        run: sed -i '/android:roundIcon/d' app/src/main/AndroidManifest.xml
-
-      - name: Check source-api.aar
+      - name: Ensure source-api.aar
         run: |
           if [ ! -f app/libs/source-api.aar ]; then
-            echo "❌ source-api.aar not found in app/libs/"
+            echo "Missing source-api.aar in app/libs"
             exit 1
           fi
 
-      - name: Build APK (release)
+      - name: Fix manifest round icon
+        run: sed -i '/android:roundIcon/d' app/src/main/AndroidManifest.xml
+
+      - name: Build release
         run: |
           chmod +x gradlew
-          ./gradlew :app:clean :app:assembleRelease --no-daemon
+          ./gradlew clean :app:assembleRelease
 
-      - name: Upload APK artifact
+      - name: Rename APK
+        run: |
+          SRC=app/build/outputs/apk/release/app-release.apk
+          DEST=app/build/outputs/apk/release/Tachiyomi-prochan-1.0.apk
+          if [ -f "$SRC" ]; then
+            mv "$SRC" "$DEST"
+          else
+            echo "Release APK not found at $SRC"
+            ls -R app/build/outputs || true
+            exit 1
+          fi
+
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: PROCHAN-apk-${{ github.run_number }}
-          path: app/build/outputs/apk/release/*.apk
+          name: Tachiyomi-prochan-1.0.apk
+          path: app/build/outputs/apk/release/Tachiyomi-prochan-1.0.apk
