@@ -1,4 +1,4 @@
-package eu.kanade.tachiyomi.extension.prochan
+package eu.kanade.tachiyomi.extension.ar.prochan
 
 import eu.kanade.tachiyomi.source.model.FilterList
 import eu.kanade.tachiyomi.source.model.Page
@@ -16,23 +16,18 @@ class Prochan : ParsedHttpSource() {
     override val lang = "ar"
     override val supportsLatest = true
 
-    // Popular
     override fun popularMangaRequest(page: Int): Request =
         Request.Builder().url("$baseUrl/popular?page=$page").build()
-
     override fun popularMangaSelector(): String = "div.manga-item"
     override fun popularMangaFromElement(element: Element): SManga = searchMangaFromElement(element)
     override fun popularMangaNextPageSelector(): String? = "a.next"
 
-    // Latest
     override fun latestUpdatesRequest(page: Int): Request =
         Request.Builder().url("$baseUrl/latest?page=$page").build()
-
     override fun latestUpdatesSelector(): String = "div.manga-item"
     override fun latestUpdatesFromElement(element: Element): SManga = searchMangaFromElement(element)
     override fun latestUpdatesNextPageSelector(): String? = "a.next"
 
-    // Search
     override fun searchMangaRequest(page: Int, query: String, filters: FilterList): Request {
         val url = if (query.isBlank()) {
             "$baseUrl/search?page=$page"
@@ -41,19 +36,15 @@ class Prochan : ParsedHttpSource() {
         }
         return Request.Builder().url(url).build()
     }
-
     override fun searchMangaSelector(): String = "div.manga-item"
-
     override fun searchMangaFromElement(element: Element): SManga =
         SManga.create().apply {
             title = element.selectFirst("h3.title")?.text().orEmpty()
             thumbnail_url = element.selectFirst("img")?.absUrl("src")
             url = element.selectFirst("a")?.attr("href").orEmpty()
         }
-
     override fun searchMangaNextPageSelector(): String? = "a.next"
 
-    // Details
     override fun mangaDetailsParse(document: Document): SManga =
         SManga.create().apply {
             title = document.selectFirst("h1.title")?.text().orEmpty()
@@ -64,29 +55,24 @@ class Prochan : ParsedHttpSource() {
             thumbnail_url = document.selectFirst("img.cover")?.absUrl("src")
         }
 
-    // Chapters
     override fun chapterListSelector(): String = "ul.chapters li"
-
     override fun chapterFromElement(element: Element): SChapter =
         SChapter.create().apply {
             name = element.selectFirst("a")?.text().orEmpty()
             url = element.selectFirst("a")?.attr("href").orEmpty()
         }
 
-    // Pages
     override fun pageListParse(document: Document): List<Page> =
         document.select("img.page-image").mapIndexed { index, img ->
             Page(index, "", img.absUrl("src"))
         }
-
     override fun imageUrlParse(document: Document): String =
         document.selectFirst("img.page-image")?.absUrl("src").orEmpty()
 
     // ✅ الدالة المطلوبة من ParsedHttpSource حسب الـ AAR
-    override fun chapterPageParse(response: Response): SChapter {
-        return SChapter.create().apply {
+    override fun chapterPageParse(response: Response): SChapter =
+        SChapter.create().apply {
             name = "Chapter"
             url = response.request.url.toString()
         }
-    }
 }
