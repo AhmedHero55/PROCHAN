@@ -64,3 +64,15 @@ class Prochan : ParsedHttpSource() {
 
     override fun pageListParse(document: Document): List<Page> =
         document.select("img.page-image").mapIndexed { index, img ->
+            Page(index, "", img.absUrl("src"))
+        }
+    override fun imageUrlParse(document: Document): String =
+        document.selectFirst("img.page-image")?.absUrl("src").orEmpty()
+
+    // احتياطي للتوافق مع الـ AAR المستخدم إن لزم
+    override fun chapterPageParse(response: Response): SChapter =
+        SChapter.create().apply {
+            name = "Chapter"
+            url = response.request.url.toString()
+        }
+}
