@@ -47,11 +47,13 @@ android {
         resources.excludes.add("META-INF/*")
     }
 
-    // ✅ تغيير اسم ملف الـ APK الناتج
-    applicationVariants.all {
-        outputs.all {
-            val apkName = "Tachiyomi-prochan-${versionName}.apk"
-            outputFileName.set(apkName)
+    // ✅ تغيير اسم ملف الـ APK الناتج بطريقة صحيحة
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            val apkName = "Tachiyomi-prochan-${variant.versionName}.apk"
+            output.outputFile.set(
+                output.outputFile.get().parentFile.resolve(apkName)
+            )
         }
     }
 }
