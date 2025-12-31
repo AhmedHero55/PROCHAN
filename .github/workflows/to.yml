@@ -1,0 +1,42 @@
+name: Build Source API
+
+on:
+  workflow_dispatch:   # تشغيل يدوي
+  push:
+    paths:
+      - "source-api/**"
+
+jobs:
+  build-source-api:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Build source-api AAR
+        run: |
+          chmod +x gradlew
+          ./gradlew :source-api:clean :source-api:assembleRelease
+
+      - name: Upload source-api artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-api.aar
+          path: source-api/build/outputs/aar/source-api-release.aar
