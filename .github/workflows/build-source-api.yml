@@ -30,7 +30,7 @@ jobs:
       - name: Build source-api AAR
         run: |
           chmod +x gradlew
-          ./gradlew :source-api:clean :source-api:assembleRelease
+          ./gradlew :source-api:assembleRelease
 
       - name: Upload source-api artifact
         uses: actions/upload-artifact@v4
