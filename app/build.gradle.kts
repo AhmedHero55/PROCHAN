@@ -42,18 +42,16 @@ android {
         }
     }
 
-    // ✅ Gradle 8.10: استخدم packaging بدل packagingOptions
     packaging {
         resources.excludes.add("META-INF/*")
     }
+}
 
-    // ✅ تغيير اسم ملف الـ APK الناتج بطريقة صحيحة
-    applicationVariants.all { variant ->
-        variant.outputs.all { output ->
-            val apkName = "Tachiyomi-prochan-${variant.versionName}.apk"
-            output.outputFile.set(
-                output.outputFile.get().parentFile.resolve(apkName)
-            )
+// ✅ الطريقة الجديدة لتغيير اسم ملف الـ APK في Gradle 8.10
+androidComponents {
+    onVariants { variant ->
+        variant.outputs.forEach { output ->
+            output.outputFileName.set("Tachiyomi-prochan-${variant.versionName}.apk")
         }
     }
 }
