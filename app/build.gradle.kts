@@ -42,14 +42,16 @@ android {
         }
     }
 
-    packagingOptions {
+    // ✅ Gradle 8.10: استخدم packaging بدل packagingOptions
+    packaging {
         resources.excludes.add("META-INF/*")
     }
 
     // ✅ تغيير اسم ملف الـ APK الناتج
     applicationVariants.all {
         outputs.all {
-            outputFileName = "Tachiyomi-prochan-${versionName}.apk"
+            val apkName = "Tachiyomi-prochan-${versionName}.apk"
+            outputFileName.set(apkName)
         }
     }
 }
