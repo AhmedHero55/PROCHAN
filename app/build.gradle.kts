@@ -51,7 +51,8 @@ android {
 androidComponents {
     onVariants { variant ->
         variant.outputs.forEach { output ->
-            output.outputFileName.set("Tachiyomi-prochan-${variant.versionName}.apk")
+            val versionName = android.defaultConfig.versionName.get()
+            output.outputFileName.set("Tachiyomi-prochan-$versionName.apk")
         }
     }
 }
