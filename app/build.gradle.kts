@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "eu.kanade.tachiyomi.extension.prochan"
+    namespace = "eu.kanade.tachiyomi.extension.ar.prochan"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "eu.kanade.tachiyomi.extension.prochan"
+        applicationId = "eu.kanade.tachiyomi.extension.ar.prochan"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
@@ -18,7 +18,6 @@ android {
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("debug")
-            // أبقي المينيـفاي مغلق مؤقتًا لتسهيل التشخيص
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -39,20 +38,16 @@ android {
     kotlin {
         compilerOptions {
             jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
-            // لتجاوز تعارض الميتاداتا بين Kotlin والمكتبة AAR عند الحاجة
             freeCompilerArgs.add("-Xskip-metadata-version-check")
         }
     }
 
-    // منع تعارض موارد META-INF داخل الـ AAR (يظهر أحيانًا مع source-api)
     packagingOptions {
         resources.excludes.add("META-INF/*")
     }
 }
 
 dependencies {
-    // ✅ مكتبة Tachiyomi Source API بصيغة AAR
-    // يجب أن يكون الملف موجودًا في: app/libs/source-api.aar
     implementation(files("libs/source-api.aar"))
 
     implementation("androidx.core:core-ktx:1.15.0")
