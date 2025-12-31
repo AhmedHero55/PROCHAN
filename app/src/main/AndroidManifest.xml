@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    package="eu.kanade.tachiyomi.extension.prochan">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="eu.kanade.tachiyomi.extension.ar.prochan">
 
     <application
         android:allowBackup="false"
@@ -9,7 +8,6 @@
         android:label="ProChan"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <!-- لا حاجة لوسوم meta-data، Tachiyomi يلتقط الكلاس الواصل من ParsedHttpSource -->
     </application>
 
 </manifest>
