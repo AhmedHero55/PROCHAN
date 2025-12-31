@@ -18,6 +18,7 @@ android {
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("debug")
+            // أبقي المينيـفاي مغلق مؤقتًا لتسهيل التشخيص
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -38,13 +39,20 @@ android {
     kotlin {
         compilerOptions {
             jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+            // لتجاوز تعارض الميتاداتا بين Kotlin والمكتبة AAR عند الحاجة
             freeCompilerArgs.add("-Xskip-metadata-version-check")
         }
+    }
+
+    // منع تعارض موارد META-INF داخل الـ AAR (يظهر أحيانًا مع source-api)
+    packagingOptions {
+        resources.excludes.add("META-INF/*")
     }
 }
 
 dependencies {
-    // ✅ إضافة مكتبة Tachiyomi Source API بصيغة AAR
+    // ✅ مكتبة Tachiyomi Source API بصيغة AAR
+    // يجب أن يكون الملف موجودًا في: app/libs/source-api.aar
     implementation(files("libs/source-api.aar"))
 
     implementation("androidx.core:core-ktx:1.15.0")
