@@ -45,6 +45,13 @@ android {
     packagingOptions {
         resources.excludes.add("META-INF/*")
     }
+
+    // ✅ تغيير اسم ملف الـ APK الناتج
+    applicationVariants.all {
+        outputs.all {
+            outputFileName = "Tachiyomi-prochan-${versionName}.apk"
+        }
+    }
 }
 
 dependencies {
