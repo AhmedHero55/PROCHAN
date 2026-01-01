@@ -1,4 +1,4 @@
-name: Build Source API (Standalone)
+name: Build Source API
 
 on:
   workflow_dispatch:   # تشغيل يدوي من واجهة GitHub
@@ -30,10 +30,10 @@ jobs:
       - name: Build source-api AAR
         run: |
           chmod +x gradlew
-          ./gradlew assembleRelease
+          ./gradlew :source-api:assembleRelease
 
       - name: Upload source-api artifact
         uses: actions/upload-artifact@v4
         with:
           name: source-api.aar
-          path: build/outputs/aar/*.aar
+          path: source-api/build/outputs/aar/source-api-release.aar
