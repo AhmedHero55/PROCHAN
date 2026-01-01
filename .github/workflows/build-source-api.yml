@@ -1,7 +1,7 @@
 name: Build Source API (Standalone)
 
 on:
-  workflow_dispatch:   # تشغيل يدوي من واجهة GitHub
+  workflow_dispatch:
 
 jobs:
   build-source-api:
@@ -17,23 +17,13 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Cache Gradle
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
       - name: Build source-api AAR
         run: |
           chmod +x gradlew
           ./gradlew assembleRelease
 
-      - name: Upload source-api artifact
+      - name: Upload all AAR artifacts
         uses: actions/upload-artifact@v4
         with:
           name: source-api.aar
-          path: build/outputs/aar/*.aar
+          path: '**/*.aar'
